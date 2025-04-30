@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="loading.lottie"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/loading_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-24dp"
+        android:fontFamily="@font/raleway_medium"
+        android:text="@string/processing_result"
+        android:textColor="?colorOnBackground"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toBottomOf="@id/animation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/loading_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-16dp"
+        android:fontFamily="@font/raleway_extralight"
+        tools:text="добавляем вотермарки"
+        android:textColor="?colorOnBackground"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/loading_label"
+        app:layout_constraintTop_toBottomOf="@id/loading_label" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<clip xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progress_clip"
+    android:clipOrientation="horizontal"
+    android:gravity="left">
+    <inset
+        android:insetTop="3.5dp"
+        android:insetBottom="3.5dp">
+        <shape android:shape="rectangle">
+            <solid android:color="?colorOnTertiary" />
+            <corners android:radius="16dp" />
+        </shape>
+    </inset>
+</clip>

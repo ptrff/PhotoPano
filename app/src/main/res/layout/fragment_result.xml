@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parameters_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/raleway_regular"
+        android:text="@string/animation_done"
+        android:textColor="?colorOnBackground"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@id/options_root"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/options_root"
+        style="?materialCardViewFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        app:cardBackgroundColor="@color/white_alpha_005"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/result_root"
+        app:layout_constraintEnd_toStartOf="@id/result_root"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/result_root">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/compliments_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingVertical="24dp">
+
+                <ImageView
+                    android:id="@+id/rtuitlab_logo"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginBottom="16dp"
+                    android:scaleType="fitStart"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/itlab_label"
+                    app:layout_constraintStart_toStartOf="@id/itlab_label"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/rtuitlab"
+                    app:tint="?colorSecondaryContainer" />
+
+                <TextView
+                    android:id="@+id/itlab_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rtuitlab_2024"
+                    android:textColor="?colorSecondaryContainer"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toStartOf="@id/rtuitlab_separator"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rtuitlab_logo" />
+
+                <View
+                    android:id="@+id/rtuitlab_separator"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="?colorSecondaryContainer"
+                    app:layout_constraintEnd_toStartOf="@id/compliments_text"
+                    app:layout_constraintStart_toEndOf="@id/itlab_label" />
+
+                <TextView
+                    android:id="@+id/compliments_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:lineSpacingExtra="8sp"
+                    android:text="@string/compliments"
+                    android:textColor="?colorSecondaryContainer"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/rtuitlab_separator"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/qr_code_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:clipToPadding="false"
+                android:padding="24dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/qr_code"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/qr_code_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/raleway_medium"
+                    android:text="Ваша гифка"
+                    android:textColor="?colorOnBackground"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toTopOf="@id/arrow"
+                    app:layout_constraintStart_toEndOf="@id/qr_code"
+                    app:layout_constraintTop_toTopOf="@id/qr_code"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <ImageView
+                    android:id="@+id/arrow"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="8dp"
+                    android:rotation="165"
+                    android:src="@drawable/ic_handdrawn_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/qr_code"
+                    app:layout_constraintStart_toStartOf="@id/qr_code_text"
+                    app:layout_constraintTop_toBottomOf="@id/qr_code_text"
+                    app:tint="?colorOnBackground" />
+
+                <Button
+                    android:id="@+id/email"
+                    style="?materialIconButtonFilledStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:translationX="4dp"
+                    android:translationY="4dp"
+                    app:backgroundTint="?colorPrimaryContainer"
+                    app:cornerRadius="90dp"
+                    app:icon="@drawable/ic_send_mail"
+                    app:iconTint="?colorOnBackground"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:rippleColor="?colorOnTertiary" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/enter_mail_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:clipToPadding="false"
+                android:padding="24dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/enter_mail_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/raleway_medium"
+                    android:text="@string/enter_mail"
+                    android:textColor="?colorOnBackground"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/to_send_result_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/raleway_regular"
+                    android:text="@string/we_will_send_result_on_it"
+                    android:textColor="?colorOnBackground"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/enter_mail_text" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlinedTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/e_mail"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/to_send_result_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/emailField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway_regular"
+                        android:imeOptions="actionDone"
+                        android:inputType="textWebEmailAddress" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/back"
+                    style="?materialIconButtonFilledStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:translationX="-4dp"
+                    android:translationY="4dp"
+                    app:backgroundTint="?colorSecondaryContainer"
+                    app:cornerRadius="90dp"
+                    app:icon="@drawable/ic_back"
+                    app:iconTint="?colorOnBackground"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="?colorOnTertiary" />
+
+                <Button
+                    android:id="@+id/done"
+                    style="?materialIconButtonFilledStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:translationX="4dp"
+                    android:translationY="4dp"
+                    app:backgroundTint="?colorTertiaryContainer"
+                    app:cornerRadius="90dp"
+                    app:icon="@drawable/ic_done"
+                    app:iconTint="?colorOnBackground"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:rippleColor="?colorOnTertiary" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/result_root"
+        style="?materialCardViewFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:scaleY="0"
+        app:cardBackgroundColor="@color/white_alpha_005"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toTopOf="@id/button_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/options_root"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <ImageView
+            android:id="@+id/result_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_height="240dp"
+            android:background="?colorPrimaryContainer" />
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/button_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/options_root">
+
+        <Button
+            android:id="@+id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:backgroundTint="?colorSecondaryContainer"
+            android:elegantTextHeight="true"
+            android:fontFamily="@font/raleway_semibold"
+            android:paddingStart="18dp"
+            android:paddingEnd="16dp"
+            android:text="@string/to_homepage"
+            android:textColor="?colorOnBackground"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_home"
+            app:iconTint="?colorOnBackground"
+            app:rippleColor="?colorOnSecondary" />
+
+        <Button
+            android:id="@+id/uploading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/progress_button"
+            android:elegantTextHeight="true"
+            android:fontFamily="@font/raleway_semibold"
+            android:paddingStart="18dp"
+            android:paddingEnd="16dp"
+            android:text="@string/uploading"
+            android:textColor="?colorOnBackground"
+            app:backgroundTint="@null"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_qr_code"
+            app:iconTint="?colorOnBackground"
+            app:rippleColor="?colorOnSecondary" />
+
+        <Button
+            android:id="@+id/send_by_mail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:backgroundTint="?colorTertiaryContainer"
+            android:elegantTextHeight="true"
+            android:fontFamily="@font/raleway_semibold"
+            android:paddingStart="18dp"
+            android:paddingEnd="16dp"
+            android:text="@string/send_by_mail"
+            android:textColor="?colorOnBackground"
+            android:visibility="gone"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_send_mail"
+            app:iconTint="?colorOnBackground"
+            app:rippleColor="?colorOnTertiary" />
+
+        <Button
+            android:id="@+id/reshoot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:backgroundTint="?colorPrimaryContainer"
+            android:elegantTextHeight="true"
+            android:fontFamily="@font/raleway_semibold"
+            android:paddingStart="18dp"
+            android:paddingEnd="16dp"
+            android:text="@string/reshoot"
+            android:textColor="?colorOnBackground"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_reshoot"
+            app:iconTint="?colorOnBackground"
+            app:rippleColor="?colorOnPrimary" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
