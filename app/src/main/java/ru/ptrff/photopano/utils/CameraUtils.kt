@@ -206,9 +206,12 @@ class CameraUtils @Inject constructor() {
             outputs.add(surface)
 
             try {
-                builder = camera.cameraDevice.createCaptureRequest(
+                builder = camera.cameraDevice?.createCaptureRequest(
                     CameraDevice.TEMPLATE_PREVIEW
-                )
+                ) ?: run {
+                    error("no camera device")
+                    return
+                }
             } catch (e: CameraAccessException) {
                 Log.e(MainActivity.TAG, "camera " + camera.id + " error: " + e.message)
                 return
@@ -237,9 +240,12 @@ class CameraUtils @Inject constructor() {
             outputs.add(imageReader.surface)
 
             try {
-                builder = camera.cameraDevice.createCaptureRequest(
+                builder = camera.cameraDevice?.createCaptureRequest(
                     CameraDevice.TEMPLATE_STILL_CAPTURE
-                )
+                ) ?: run {
+                    error("no camera device")
+                    return
+                }
             } catch (e: CameraAccessException) {
                 Log.e(MainActivity.TAG, "camera ${camera.id} error: ${e.message}")
                 return
@@ -250,7 +256,7 @@ class CameraUtils @Inject constructor() {
         camera.previewRequestBuilder = builder
 
         try {
-            camera.cameraDevice.createCaptureSession(
+            camera.cameraDevice?.createCaptureSession(
                 outputs,
                 object : CameraCaptureSession.StateCallback() {
                     override fun onConfigured(session: CameraCaptureSession) {
@@ -337,8 +343,8 @@ class CameraUtils @Inject constructor() {
     }
 
     fun close(camera: Camera) = camera.apply {
-        captureSession.close()
-        cameraDevice.close()
+        captureSession?.close()
+        cameraDevice?.close()
     }
 
     fun closeAll() = cameraList.forEach(::close)

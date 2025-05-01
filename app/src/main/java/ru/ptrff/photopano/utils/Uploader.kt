@@ -25,13 +25,13 @@ class Uploader {
         BuildConfig.AWS_SECRET_KEY
     )
 
-    private val s3client = AmazonS3Client(cr, Region.getRegion(Regions.DEFAULT_REGION)).apply {
+    private val s3client = AmazonS3Client(cr).apply {
         endpoint = "https://storage.yandexcloud.net"
     }
 
-    private var key: String = error("key is not initialized")
+    private lateinit var key: String
 
-    fun upload(context: Context?, file: File, listener: TransferListener?) {
+    fun upload(context: Context, file: File, listener: TransferListener) {
         TransferNetworkLossHandler.getInstance(context)
 
         if (file.isFile) {

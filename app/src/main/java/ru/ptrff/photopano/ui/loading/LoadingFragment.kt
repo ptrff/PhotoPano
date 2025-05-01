@@ -11,10 +11,11 @@ import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentLoadingBinding
-import ru.ptrff.photopano.ui.MainActivity
+import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
 import ru.ptrff.photopano.utils.AnimationUtils
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.viewBinding
@@ -82,12 +83,10 @@ class LoadingFragment : Fragment() {
             .andThen(Completable.defer(::emptyTemp))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(::processingDone) { throwable: Throwable ->
-                Log.e(
-                    MainActivity.Companion.TAG,
-                    "error creating animation: " + throwable.message
-                )
-            }
+            .subscribeBy(
+                onComplete = ::processingDone,
+                onError = { Log.e(TAG, "error creating animation: " + it.message) }
+            )
     }
 
     private fun processingDone() {

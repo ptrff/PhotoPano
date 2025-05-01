@@ -22,11 +22,12 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import pl.droidsonroids.gif.GifDrawable
 import ru.ptrff.photopano.databinding.FragmentParametersBinding
 import ru.ptrff.photopano.models.Camera
-import ru.ptrff.photopano.ui.MainActivity
+import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.viewBinding
@@ -39,10 +40,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ParametersFragment : Fragment() {
     private val binding by viewBinding(FragmentParametersBinding::inflate)
-    private val counterDialog by fastLazy {
-        CounterDialog(binding.preparationSlider.value.toInt(), cameraCount)
-    }
-
+    private lateinit var counterDialog: CounterDialog
     private val sharedPreferences: SharedPreferences by fastLazy {
         requireActivity().getPreferences(Context.MODE_PRIVATE)
     }
@@ -133,38 +131,44 @@ class ParametersFragment : Fragment() {
         }
     }
 
-    private fun showDialog(typedValue: TypedValue) = counterDialog.apply {
-        setOnDismissListener {
-            binding.done.isEnabled = true
-            requireContext().theme.resolveAttribute(
-                R.attr.colorTertiaryContainer,
-                typedValue,
-                true
-            )
-            binding.done.setBackgroundColor(typedValue.data)
-            cameraUtils.closeAll()
+    private fun showDialog(typedValue: TypedValue) {
+        counterDialog = CounterDialog(
+            binding.preparationSlider.value.toInt(),
+            cameraCount,
+            layoutInflater
+        ).apply {
+            setOnDismissListener {
+                binding.done.isEnabled = true
+                this@ParametersFragment.requireContext().theme.resolveAttribute(
+                    R.attr.colorTertiaryContainer,
+                    typedValue,
+                    true
+                )
+                binding.done.setBackgroundColor(typedValue.data)
+                cameraUtils.closeAll()
+            }
+
+            fadeOutParametersCallback = { duration: Int ->
+                binding.parametersRoot.animate()
+                    .alpha(0f)
+                    .setInterpolator(LinearInterpolator())
+                    .setDuration(duration.toLong())
+                    .start()
+            }
+
+            startShootingCallback = {
+                binding.flashes.animate()
+                    .alpha(0.4f)
+                    .setInterpolator(LinearInterpolator())
+                    .setDuration(1000)
+                    .start()
+
+                startFlashes()
+                startPackingFromQueue()
+            }
+
+            show()
         }
-
-        fadeOutParametersCallback = { duration: Int ->
-            binding.parametersRoot.animate()
-                .alpha(0f)
-                .setInterpolator(LinearInterpolator())
-                .setDuration(duration.toLong())
-                .start()
-        }
-
-        startShootingCallback = {
-            binding.flashes.animate()
-                .alpha(0.4f)
-                .setInterpolator(LinearInterpolator())
-                .setDuration(1000)
-                .start()
-
-            startFlashes()
-            startPackingFromQueue()
-        }
-
-        show()
     }
 
     private fun sortCamerasByPack() {
@@ -180,11 +184,11 @@ class ParametersFragment : Fragment() {
             cameras[i].let { cameraPacks[packId].add(it) }
         }
 
-        Log.d(MainActivity.Companion.TAG, "Pack count: ${cameraUtils.packCount}")
+        Log.d(TAG, "Pack count: ${cameraUtils.packCount}")
 
         for (packId in 0 until packCount) {
             Log.d(
-                MainActivity.Companion.TAG,
+                TAG,
                 "Pack: ${packId + 1} cameras: ${
                     cameraPacks[packId].joinToString(", ") { it.id }
                 }"
@@ -198,7 +202,7 @@ class ParametersFragment : Fragment() {
 
         interval = (binding.durationSlider.value * intervalStep * 1000).toInt()
         interval += 500
-        Log.d(MainActivity.Companion.TAG, "interval: $interval")
+        Log.d(TAG, "interval: $interval")
 
         Completable.fromAction {
             var allPacksEmpty = false
@@ -209,11 +213,9 @@ class ParametersFragment : Fragment() {
         }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    Log.d(MainActivity.Companion.TAG, "queue prepared")
-                },
-                { error -> error.message?.let { Log.e(MainActivity.Companion.TAG, it) } }
+            .subscribeBy(
+                onComplete = { Log.d(TAG, "queue prepared") },
+                onError = { it.message?.let { m -> Log.e(TAG, m) } }
             )
     }
 
@@ -222,30 +224,33 @@ class ParametersFragment : Fragment() {
             .interval(interval.toLong(), TimeUnit.MILLISECONDS)
             .observeOn(Schedulers.io())
             .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe({ time: Long? ->
-                if (!cameraQueue.isEmpty()) {
-                    val camera = cameraQueue.poll()
-                    if (camera != null) {
-                        camera.start = System.currentTimeMillis()
-                        camera.camNum = iterationNum
-                        cameraUtils.startPreview(camera)
+            .subscribeBy(
+                onNext = {
+                    if (!cameraQueue.isEmpty()) {
+                        val camera = cameraQueue.poll()
+                        if (camera != null) {
+                            camera.start = System.currentTimeMillis()
+                            camera.camNum = iterationNum
+                            cameraUtils.startPreview(camera)
+                        }
+                        iterationNum++
                     }
+                },
+                onError = {
+                    Log.e(TAG, "Camera error: ${it.message}")
+                    Log.d(TAG, "Trying continue skipping it")
                     iterationNum++
+                    if (iterationNum >= cameraCount) {
+                        cameraQueueLoop?.dispose()
+                        binding.root.post(::shootingComplete)
+                    } else {
+                        Log.d(
+                            TAG,
+                            " iterationNum: $iterationNum cameraCount: $cameraCount"
+                        )
+                    }
                 }
-            }, { error ->
-                Log.e(MainActivity.Companion.TAG, "Camera error: ${error.message}")
-                Log.d(MainActivity.Companion.TAG, "Trying continue skipping it")
-                iterationNum++
-                if (iterationNum >= cameraCount) {
-                    cameraQueueLoop?.dispose()
-                    binding.root.post(::shootingComplete)
-                } else {
-                    Log.d(
-                        MainActivity.Companion.TAG,
-                        " iterationNum: $iterationNum cameraCount: $cameraCount"
-                    )
-                }
-            })
+            )
     }
 
     private fun addToQueue() {
@@ -257,7 +262,7 @@ class ParametersFragment : Fragment() {
             enqueueCamera(c)
 
             Log.d(
-                MainActivity.Companion.TAG,
+                TAG,
                 "added to queue: ${c.id} from pack: ${cameraPacks.indexOf(pack)}"
             )
         }
@@ -274,7 +279,7 @@ class ParametersFragment : Fragment() {
         onClosedCallback = {
             camera.end = System.currentTimeMillis()
             Log.d(
-                MainActivity.Companion.TAG,
+                TAG,
                 "camera ${camera.id} operated for ${camera.end - camera.start} ms"
             )
             if (cameraQueue.isEmpty() && iterationNum == cameraCount) {

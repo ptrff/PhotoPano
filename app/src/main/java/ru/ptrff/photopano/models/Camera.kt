@@ -22,8 +22,8 @@ class Camera(val id: String) {
     lateinit var imageReader: ImageReader
     lateinit var previewRequestBuilder: CaptureRequest.Builder
     lateinit var captureRequest: CaptureRequest
-    lateinit var cameraDevice: CameraDevice
-    lateinit var captureSession: CameraCaptureSession
+    var cameraDevice: CameraDevice? = null
+    var captureSession: CameraCaptureSession? = null
     lateinit var captureSize: Size
     lateinit var image: Image
     var camNum: Int = 0

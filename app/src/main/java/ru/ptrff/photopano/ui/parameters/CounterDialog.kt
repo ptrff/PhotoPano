@@ -3,7 +3,7 @@ package ru.ptrff.photopano.ui.parameters
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.DialogInterface
+import android.content.DialogInterface.OnDismissListener
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.TypedValue
@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
@@ -18,17 +19,21 @@ import androidx.transition.TransitionSet
 import com.google.android.material.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.ptrff.photopano.databinding.FragmentCounterBinding
-import ru.ptrff.photopano.utils.fastLazy
-import ru.ptrff.photopano.utils.viewBinding
 
 class CounterDialog(
     private var duration: Int,
-    private val cameraCount: Int
+    private val cameraCount: Int,
+    layoutInflater: LayoutInflater
 ) : DialogFragment() {
-    private val binding by viewBinding(FragmentCounterBinding::inflate)
-    private val dialog by fastLazy { createDialog(layoutInflater) }
-    private val density by fastLazy {
-        layoutInflater.context.resources.displayMetrics.density
+    private val binding: FragmentCounterBinding = FragmentCounterBinding.inflate(layoutInflater)
+    private val dialog: AlertDialog
+    private val density: Float
+
+    init {
+        dialog = createDialog(layoutInflater)
+        density = layoutInflater.context.resources.displayMetrics.density
+
+        setupDialog()
     }
 
     lateinit var startShootingCallback: () -> Unit
@@ -36,17 +41,12 @@ class CounterDialog(
 
     var scaleStep = 0.5f
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setupDialog()
-    }
-
     private fun createDialog(inflater: LayoutInflater) =
         MaterialAlertDialogBuilder(inflater.context)
             .setView(binding.getRoot())
             .create()
 
-    fun setOnDismissListener(onDismissListener: DialogInterface.OnDismissListener) {
+    fun setOnDismissListener(onDismissListener: OnDismissListener) {
         dialog.setOnDismissListener(onDismissListener)
     }
 
@@ -189,9 +189,9 @@ class CounterDialog(
             binding.shootingProgress.setProgress(binding.shootingProgress.progress + 1, true)
 
             binding.shootingProgressText.text = "(" +
-                (binding.shootingProgress.progress) +
-                "/" +
-                binding.shootingProgress.max + ")"
+                    (binding.shootingProgress.progress) +
+                    "/" +
+                    binding.shootingProgress.max + ")"
         }
     }
 

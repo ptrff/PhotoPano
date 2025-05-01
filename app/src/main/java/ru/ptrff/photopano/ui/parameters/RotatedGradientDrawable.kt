@@ -31,33 +31,36 @@ class RotatedGradientDrawable(
         positions,
         Shader.TileMode.CLAMP
     )
-    private val noiseDrawable =
-        AppCompatResources.getDrawable(context, R.drawable.noise_bitmap) as BitmapDrawable
-    private val noiseShader =
-        BitmapShader(noiseDrawable.bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
+    private val noiseDrawable = AppCompatResources.getDrawable(
+        context,
+        R.drawable.noise_bitmap
+    ) as BitmapDrawable
+    private val noiseShader = BitmapShader(
+        noiseDrawable.bitmap,
+        Shader.TileMode.REPEAT,
+        Shader.TileMode.REPEAT
+    )
     private var rotationDegrees = 0f
     private val centerX = width / 2
     private val centerY = height / 2
 
-    override fun draw(canvas: Canvas) {
-        canvas.withSave {
-            val matrix = Matrix()
-            matrix.postRotate(rotationDegrees, centerX.toFloat(), centerY.toFloat())
+    override fun draw(canvas: Canvas) = canvas.withSave {
+        val matrix = Matrix()
+        matrix.postRotate(rotationDegrees, centerX.toFloat(), centerY.toFloat())
 
-            gradient.setLocalMatrix(matrix)
-            paint.setShader(gradient)
-            drawRect(
-                bounds.left.toFloat(),
-                bounds.top.toFloat(),
-                bounds.right.toFloat(),
-                bounds.bottom.toFloat(),
-                paint
-            )
+        gradient.setLocalMatrix(matrix)
+        paint.setShader(gradient)
+        drawRect(
+            bounds.left.toFloat(),
+            bounds.top.toFloat(),
+            bounds.right.toFloat(),
+            bounds.bottom.toFloat(),
+            paint
+        )
 
-            noiseShader.setLocalMatrix(matrix)
-            paint.setShader(noiseShader)
-            drawRect(bounds, paint)
-        }
+        noiseShader.setLocalMatrix(matrix)
+        paint.setShader(noiseShader)
+        drawRect(bounds, paint)
     }
 
     override fun setAlpha(alpha: Int) {

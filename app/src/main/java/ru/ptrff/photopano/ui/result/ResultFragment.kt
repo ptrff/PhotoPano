@@ -31,6 +31,9 @@ import androidx.core.graphics.scale
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -46,6 +49,7 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorColors
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogo
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoPadding
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoShape
+import kotlinx.coroutines.launch
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentResultBinding
 import ru.ptrff.photopano.ui.MainActivity
@@ -57,6 +61,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Locale
 import kotlin.math.min
+import com.google.android.material.R as MaterialR
 
 class ResultFragment : Fragment() {
     private val binding by viewBinding(FragmentResultBinding::inflate)
@@ -74,27 +79,53 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initClicks()
         animateCompliments()
-        loadGif()
         initObservers()
+
+        File(requireContext().filesDir, "output.gif").takeIf { it.exists() }?.let { file ->
+            uploadGif(file)
+            loadGif(file)
+        } ?: run { showError() }
+    }
+
+    private fun uploadGif(file: File) {
+        if (upload) {
+            viewModel.onEvent(ResultUiEvents.UploadGif(file))
+        } else {
+            binding.uploading.setText(R.string.upload_to_cloud)
+            binding.uploading.setOnClickListener { v: View? ->
+                binding.uploading.setText(R.string.uploading)
+                viewModel.onEvent(ResultUiEvents.UploadGif(file))
+            }
+        }
     }
 
     private fun initObservers() = with(viewModel) {
-        progress.observe(viewLifecycleOwner) { progress: Int ->
-            when (progress) {
-                -1 -> updateProgress(0)
-                100 -> {
-                    updateProgress(progress)
-                    animateDoneUploading()
-                }
-
-                else -> updateProgress(progress)
+        viewModelScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { state.collect { render(it) } }
+                launch { sideEffect.collect { handleSideEffect(it) } }
             }
         }
+    }
 
-        url.observe(viewLifecycleOwner, ::generateAndPasteQR)
+    private fun render(state: ResultState) = with(state) {
+        when (progress) {
+            -1 -> updateProgress(0)
+            100 -> {
+                updateProgress(progress)
+                animateDoneUploading()
+            }
+
+            else -> updateProgress(progress)
+        }
+    }
+
+    private fun handleSideEffect(effect: ResultSideEffects) = when (effect) {
+        is ResultSideEffects.GenerateAndPasteQR -> generateAndPasteQR(effect.url)
     }
 
     private fun generateAndPasteQR(url: String) {
+        Log.d("MYLOG", "HIHIHHIH $url")
         val qrData: QrData = QrData.Url(url)
         val options: QrVectorOptions = QrVectorOptions.Builder()
             .setLogo(
@@ -129,8 +160,8 @@ class ResultFragment : Fragment() {
         ValueAnimator.ofInt(oldLevel, progressLevel).apply {
             duration = 500
             interpolator = DecelerateInterpolator()
-            addUpdateListener { animator: ValueAnimator ->
-                binding.uploading.background.setLevel(animator.animatedValue as Int)
+            addUpdateListener {
+                binding.uploading.background.setLevel(it.animatedValue as Int)
             }
             start()
         }
@@ -139,13 +170,13 @@ class ResultFragment : Fragment() {
     private fun animateDoneUploading() {
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(
-            com.google.android.material.R.attr.colorOnTertiary,
+            MaterialR.attr.colorOnTertiary,
             typedValue,
             true
         )
         val colorFrom = typedValue.data
         requireContext().theme.resolveAttribute(
-            com.google.android.material.R.attr.colorTertiaryContainer,
+            MaterialR.attr.colorTertiaryContainer,
             typedValue,
             true
         )
@@ -167,54 +198,33 @@ class ResultFragment : Fragment() {
         initDownloadClicks()
     }
 
-    private fun loadGif() {
-        val file = File(requireContext().filesDir, "output.gif")
-        if (file.exists()) {
-            viewModel.url.value?.let {
-                if (it.isEmpty()) {
-                    if (upload) {
-                        viewModel.upload(file)
-                    } else {
-                        binding.uploading.setText(R.string.upload_to_cloud)
-                        binding.uploading.setOnClickListener { v: View? ->
-                            binding.uploading.setText(R.string.uploading)
-                            viewModel.upload(file)
-                        }
-                    }
-                }
+    private fun loadGif(file: File) = Glide.with(this)
+        .asGif()
+        .load(file)
+        .addListener(object : RequestListener<GifDrawable?> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<GifDrawable?>,
+                isFirstResource: Boolean
+            ): Boolean {
+                showError()
+                return true
             }
 
-            Glide.with(this)
-                .asGif()
-                .load(file)
-                .addListener(object : RequestListener<GifDrawable?> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<GifDrawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        showError()
-                        return true
-                    }
-
-                    override fun onResourceReady(
-                        resource: GifDrawable,
-                        model: Any,
-                        target: Target<GifDrawable?>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        animateImageAppearance()
-                        return false
-                    }
-                })
-                .skipMemoryCache(true)
-                .into(binding.resultImage)
-        } else {
-            showError()
-        }
-    }
+            override fun onResourceReady(
+                resource: GifDrawable,
+                model: Any,
+                target: Target<GifDrawable?>?,
+                dataSource: DataSource,
+                isFirstResource: Boolean
+            ): Boolean {
+                animateImageAppearance()
+                return false
+            }
+        })
+        .skipMemoryCache(true)
+        .into(binding.resultImage)
 
     private fun showError() = binding.title.setText(R.string.done_error)
 
@@ -270,7 +280,7 @@ class ResultFragment : Fragment() {
             uploading.isEnabled = false
             val typedValue = TypedValue()
             requireContext().theme.resolveAttribute(
-                com.google.android.material.R.attr.colorOnTertiary,
+                MaterialR.attr.colorOnTertiary,
                 typedValue,
                 true
             )

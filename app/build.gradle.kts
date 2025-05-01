@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -23,20 +25,21 @@ android {
 
         // testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        val properties = gradleLocalProperties(rootDir, providers)
         buildConfigField(
             "String",
             "AWS_KEY_ID",
-            "\"${project.properties["AWS_KEY_ID"]}\""
+            "\"${properties.getProperty("AWS_KEY_ID")}\""
         )
         buildConfigField(
             "String",
             "AWS_SECRET_KEY",
-            "\"${project.properties["AWS_SECRET_KEY"]}\""
+            "\"${properties.getProperty("AWS_SECRET_KEY")}\""
         )
         buildConfigField(
             "String",
             "BUCKET_NAME",
-            "\"${project.properties["BUCKET_NAME"]}\""
+            "\"${properties.getProperty("BUCKET_NAME")}\""
         )
     }
 
