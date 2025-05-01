@@ -13,7 +13,7 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
 import ru.ptrff.photopano.BuildConfig
-import ru.ptrff.photopano.views.MainActivity.Companion.TAG
+import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
 import java.io.File
 import java.net.URL
 import java.util.Date

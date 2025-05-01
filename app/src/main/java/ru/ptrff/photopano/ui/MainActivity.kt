@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui
 
 import android.os.Build
 import android.os.Bundle
@@ -9,11 +9,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.ActivityMainBinding
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.viewBinding
 import javax.inject.Inject
+import android.R as AndroidR
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity() {
             cameraUtils.init(this)
         } else {
             Snackbar.make(
-                findViewById(android.R.id.content),
-                getString(R.string.well_errors),
+                findViewById(AndroidR.id.content),
+                getString(ru.ptrff.photopano.R.string.well_errors),
                 Snackbar.LENGTH_LONG
             ).show()
         }

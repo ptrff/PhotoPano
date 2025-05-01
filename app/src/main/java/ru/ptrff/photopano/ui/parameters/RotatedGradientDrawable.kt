@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui.parameters
 
 import android.content.Context
 import android.graphics.BitmapShader
@@ -57,7 +57,6 @@ class RotatedGradientDrawable(
             noiseShader.setLocalMatrix(matrix)
             paint.setShader(noiseShader)
             drawRect(bounds, paint)
-
         }
     }
 

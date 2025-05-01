@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.adapters
+package ru.ptrff.photopano.ui.settings.adapters
 
 import android.content.Context
 import androidx.recyclerview.widget.GridLayoutManager

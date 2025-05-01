@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.adapters
+package ru.ptrff.photopano.ui.settings.adapters
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

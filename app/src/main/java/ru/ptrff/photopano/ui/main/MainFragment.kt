@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentMainBinding
 import ru.ptrff.photopano.utils.viewBinding
@@ -29,10 +29,10 @@ class MainFragment : Fragment() {
 
     private fun initClicks() {
         binding.start.setOnClickListener {
-            findNavController(it).navigate(R.id.action_mainFragment_to_parametersFragment)
+            it.findNavController().navigate(R.id.action_mainFragment_to_parametersFragment)
         }
         binding.settings.setOnClickListener {
-            findNavController(it).navigate(R.id.action_mainFragment_to_settingsFragment)
+            it.findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
         }
     }
 

@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.viewmodels
+package ru.ptrff.photopano.ui.result
 
 import android.app.Application
 import android.util.Log

@@ -10,7 +10,7 @@ import android.os.HandlerThread
 import android.util.Log
 import android.util.Size
 import android.view.TextureView
-import ru.ptrff.photopano.views.MainActivity
+import ru.ptrff.photopano.ui.MainActivity
 
 class Camera(val id: String) {
     val threadName: String = "camera_${id}_thread"

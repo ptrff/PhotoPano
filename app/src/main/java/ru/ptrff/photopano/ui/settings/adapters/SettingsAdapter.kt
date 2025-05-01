@@ -1,7 +1,8 @@
-package ru.ptrff.photopano.adapters
+package ru.ptrff.photopano.ui.settings.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Matrix
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.TextureView
@@ -13,16 +14,16 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import ru.ptrff.photopano.R
-import ru.ptrff.photopano.adapters.SettingsAdapter.SettingsItem.CameraHolder
-import ru.ptrff.photopano.adapters.SettingsAdapter.SettingsItem.ClickableLabelHolder
-import ru.ptrff.photopano.adapters.SettingsAdapter.SettingsItem.LabelHolder
-import ru.ptrff.photopano.adapters.SettingsAdapter.ViewType.entries
 import ru.ptrff.photopano.databinding.ItemSettingCameraBinding
 import ru.ptrff.photopano.databinding.ItemSettingClickableLabelBinding
 import ru.ptrff.photopano.databinding.ItemSettingLabelBinding
 import ru.ptrff.photopano.models.Camera
+import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
+import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.SettingsItem.CameraHolder
+import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.SettingsItem.ClickableLabelHolder
+import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.SettingsItem.LabelHolder
+import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.ViewType.entries
 import ru.ptrff.photopano.utils.CameraUtils
-import ru.ptrff.photopano.views.MainActivity.Companion.TAG
 import java.util.Collections
 
 class SettingsAdapter(
@@ -113,12 +114,23 @@ class SettingsAdapter(
                     cameraUtils.startPreview(camera)
                 },
                 onFrameAcquiredCallback = {
+                    transformTextureView(preview)
+                    // TODO change angle by tapping on camera
                     cameraUtils.close(camera)
                 },
                 onClosedCallback = emitter::onComplete
             )
         }
     )
+
+    fun transformTextureView(textureView: TextureView, angle: Int = 0) = textureView.apply {
+        val width = measuredWidth.toFloat()
+        val height = measuredHeight.toFloat()
+        setTransform(Matrix().apply {
+            postRotate(270F + angle, width / 2f, height / 2f);
+            postScale(width / height, height / width, width / 2f, height / 2f);
+        });
+    }
 
     fun stopPreviewing() {
         previewQueue.onComplete()
@@ -194,7 +206,7 @@ class SettingsAdapter(
         return ViewType.CAMERA.int
     }
 
-    //+1 - for bottom settings +1 - for label
+    // +1 - for bottom settings +1 - for label
     override fun getItemCount(): Int = cameraUtils.cameraCount + 2
 
     enum class BindAction {

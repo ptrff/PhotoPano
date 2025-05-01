@@ -1,17 +1,16 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui.parameters
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.DialogInterface.OnDismissListener
+import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.animation.DecelerateInterpolator
-import android.widget.LinearLayout.LayoutParams
+import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionManager
@@ -47,7 +46,7 @@ class CounterDialog(
             .setView(binding.getRoot())
             .create()
 
-    fun setOnDismissListener(onDismissListener: OnDismissListener) {
+    fun setOnDismissListener(onDismissListener: DialogInterface.OnDismissListener) {
         dialog.setOnDismissListener(onDismissListener)
     }
 
@@ -91,7 +90,10 @@ class CounterDialog(
         root.removeView(topText)
         secondsTextLayout.removeView(secondsText)
         root.removeView(bottomText)
-        secondsTextLayout.layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        secondsTextLayout.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
 
         duration.animate()
             .scaleY(1.5f)
@@ -151,8 +153,12 @@ class CounterDialog(
             setInterpolator(DecelerateInterpolator())
             TransitionManager.beginDelayedTransition(binding.root, this)
         }
-        binding.secondsTextLayout.layoutParams = LayoutParams(MATCH_PARENT, 0)
-        binding.shootingRoot.layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        binding.secondsTextLayout.layoutParams =
+            LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
+        binding.shootingRoot.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
 
         binding.shootingRoot.animate()
             .scaleYBy(0.15f)
@@ -183,9 +189,9 @@ class CounterDialog(
             binding.shootingProgress.setProgress(binding.shootingProgress.progress + 1, true)
 
             binding.shootingProgressText.text = "(" +
-                    (binding.shootingProgress.progress) +
-                    "/" +
-                    binding.shootingProgress.max + ")"
+                (binding.shootingProgress.progress) +
+                "/" +
+                binding.shootingProgress.max + ")"
         }
     }
 

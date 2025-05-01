@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui.loading
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -7,13 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentLoadingBinding
+import ru.ptrff.photopano.ui.MainActivity
 import ru.ptrff.photopano.utils.AnimationUtils
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.viewBinding
@@ -53,7 +54,6 @@ class LoadingFragment : Fragment() {
 
     @SuppressLint("CheckResult")
     private fun startProcessing() = AnimationUtils(requireContext(), duration).apply {
-
         setCameras(cameraUtils.supportedCameras)
         changeAnimationDescription =
             { binding.root.post { binding.loadingDescription.setText(it) } }
@@ -61,26 +61,30 @@ class LoadingFragment : Fragment() {
         prepareEnvironment()
             .andThen(Completable.defer(::combineImages))
             .andThen(Completable.defer(::createPalette))
-            .andThen(Completable.defer {
-                if (interpolate) {
-                    interpolation()
-                } else {
-                    Completable.complete()
+            .andThen(
+                Completable.defer {
+                    if (interpolate) {
+                        interpolation()
+                    } else {
+                        Completable.complete()
+                    }
                 }
-            })
-            .andThen(Completable.defer {
-                if (reverse) {
-                    reverseAnimation()
-                } else {
-                    convertToGif()
+            )
+            .andThen(
+                Completable.defer {
+                    if (reverse) {
+                        reverseAnimation()
+                    } else {
+                        convertToGif()
+                    }
                 }
-            })
+            )
             .andThen(Completable.defer(::emptyTemp))
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(::processingDone) { throwable: Throwable ->
                 Log.e(
-                    MainActivity.TAG,
+                    MainActivity.Companion.TAG,
                     "error creating animation: " + throwable.message
                 )
             }
@@ -89,7 +93,7 @@ class LoadingFragment : Fragment() {
     private fun processingDone() {
         val args = Bundle()
         args.putBoolean("upload", upload)
-        findNavController(binding.root)
+        binding.root.findNavController()
             .navigate(R.id.action_loadingFragment_to_resultFragment, args)
     }
 

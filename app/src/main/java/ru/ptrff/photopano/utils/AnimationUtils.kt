@@ -7,7 +7,7 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import io.reactivex.rxjava3.core.Completable
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.models.Camera
-import ru.ptrff.photopano.views.MainActivity
+import ru.ptrff.photopano.ui.MainActivity
 import java.io.File
 
 class AnimationUtils(private val context: Context, private val duration: Float) {
@@ -82,11 +82,11 @@ class AnimationUtils(private val context: Context, private val duration: Float) 
 
         return Completable.fromAction {
             FFmpegKit.execute(
-                "-framerate " + fps + " -i " + temp.absolutePath + "/%d.jpg "
-                        + "-c:v h264 "
-                        + "-b:v 2M "
-                        + "-preset slow "
-                        + temp.absolutePath + "/temp.mp4"
+                "-framerate " + fps + " -i " + temp.absolutePath + "/%d.jpg " +
+                    "-c:v h264 " +
+                    "-b:v 2M " +
+                    "-preset slow " +
+                    temp.absolutePath + "/temp.mp4"
             )
         }
     }
@@ -98,8 +98,8 @@ class AnimationUtils(private val context: Context, private val duration: Float) 
 
         return Completable.fromAction {
             FFmpegKit.execute(
-                "-i " + temp.absolutePath + "/temp.mp4 -vf \"palettegen\" -y "
-                        + output.absolutePath + "/palette.png"
+                "-i " + temp.absolutePath + "/temp.mp4 -vf \"palettegen\" -y " +
+                    output.absolutePath + "/palette.png"
             )
         }
     }
@@ -114,12 +114,12 @@ class AnimationUtils(private val context: Context, private val duration: Float) 
         return Completable.fromAction {
             FFmpegKit.execute(
                 "-i " + temp.absolutePath + "/temp.mp4 " +
-                        "-i " + output.absolutePath + "/palette.png " +
-                        "-filter_complex \"minterpolate=fps=" + fps * interpolateFactor +
-                        ":search_param=" + searchParam +
-                        ":scd_threshold=" + scdThreshold +
-                        " [vid]; [vid][1:v] paletteuse=dither=bayer:bayer_scale=5" +
-                        "\" " + output.absolutePath + "/output_i.gif"
+                    "-i " + output.absolutePath + "/palette.png " +
+                    "-filter_complex \"minterpolate=fps=" + fps * interpolateFactor +
+                    ":search_param=" + searchParam +
+                    ":scd_threshold=" + scdThreshold +
+                    " [vid]; [vid][1:v] paletteuse=dither=bayer:bayer_scale=5" +
+                    "\" " + output.absolutePath + "/output_i.gif"
             )
         }
     }
@@ -133,17 +133,17 @@ class AnimationUtils(private val context: Context, private val duration: Float) 
             if (interpolate) {
                 FFmpegKit.execute(
                     "-i " + output.absolutePath + "/output_i.gif " +
-                            "-filter_complex \"[0]reverse[r];[0][r]concat=n=2:v=1:a=0 [out];" +
-                            "[out] setpts=PTS/" + interpolateFactor + "\" "
-                            + output.absolutePath + "/output.gif"
+                        "-filter_complex \"[0]reverse[r];[0][r]concat=n=2:v=1:a=0 [out];" +
+                        "[out] setpts=PTS/" + interpolateFactor + "\" " +
+                        output.absolutePath + "/output.gif"
                 )
             } else {
                 FFmpegKit.execute(
                     "-i " + temp.absolutePath + "/temp.mp4 " +
-                            "-i " + output.absolutePath + "/palette.png " +
-                            "-filter_complex \"[0:v]reverse[r];[0:v][r]concat=n=2:v=1:a=0 [vid];" +
-                            "[vid][1:v] paletteuse=dither=bayer:bayer_scale=5\" " +
-                            output.absolutePath + "/output.gif"
+                        "-i " + output.absolutePath + "/palette.png " +
+                        "-filter_complex \"[0:v]reverse[r];[0:v][r]concat=n=2:v=1:a=0 [vid];" +
+                        "[vid][1:v] paletteuse=dither=bayer:bayer_scale=5\" " +
+                        output.absolutePath + "/output.gif"
                 )
             }
         }
@@ -158,15 +158,15 @@ class AnimationUtils(private val context: Context, private val duration: Float) 
             if (interpolate) {
                 FFmpegKit.execute(
                     "-i " + output.absolutePath + "/output_i.gif " +
-                            "-filter_complex \" setpts=PTS/" + interpolateFactor * 4 + "\" "
-                            + output.absolutePath + "/output.gif"
+                        "-filter_complex \" setpts=PTS/" + interpolateFactor * 4 + "\" " +
+                        output.absolutePath + "/output.gif"
                 )
             } else {
                 FFmpegKit.execute(
                     "-i " + temp.absolutePath + "/temp.mp4 " +
-                            "-i " + output.absolutePath + "/palette.png " +
-                            "-filter_complex \"paletteuse=dither=bayer:bayer_scale=5\" " +
-                            output.absolutePath + "/output.gif"
+                        "-i " + output.absolutePath + "/palette.png " +
+                        "-filter_complex \"paletteuse=dither=bayer:bayer_scale=5\" " +
+                        output.absolutePath + "/output.gif"
                 )
             }
         }

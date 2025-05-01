@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui.result
 
 import android.Manifest
 import android.animation.ObjectAnimator
@@ -31,7 +31,7 @@ import androidx.core.graphics.scale
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -48,9 +48,9 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoPadd
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoShape
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentResultBinding
+import ru.ptrff.photopano.ui.MainActivity
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.viewBinding
-import ru.ptrff.photopano.viewmodels.ResultViewModel
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -224,7 +224,6 @@ class ResultFragment : Fragment() {
         .setDuration(500)
         .start()
 
-
     private fun animateCompliments() = with(binding) {
         complimentsText.post {
             val height = complimentsText.layout.height
@@ -233,7 +232,8 @@ class ResultFragment : Fragment() {
             this@ResultFragment.doubleCompliments()
 
             val halfLineSpacingInPx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP, 5f,
+                TypedValue.COMPLEX_UNIT_SP,
+                5f,
                 resources.displayMetrics
             ).toInt()
 
@@ -252,7 +252,6 @@ class ResultFragment : Fragment() {
         }
     }
 
-
     private fun stopComplimentsAnimation() {
         binding.complimentsText.clearAnimation()
     }
@@ -262,7 +261,7 @@ class ResultFragment : Fragment() {
             """
                 
                 ${binding.complimentsText.text}
-                """.trimIndent()
+            """.trimIndent()
         )
     }
 
@@ -347,9 +346,7 @@ class ResultFragment : Fragment() {
 
         if (!checkForEmail()) return
 
-        val mail = binding.emailField.text.toString()
-            .lowercase(Locale.getDefault())
-            .trim()
+        val mail = binding.emailField.text.toString().lowercase(Locale.getDefault()).trim()
 
         val path =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path
@@ -362,7 +359,7 @@ class ResultFragment : Fragment() {
                 inChannel.transferTo(0, inChannel.size(), outChannel)
                 Toast.makeText(requireContext(), "done", Toast.LENGTH_SHORT).show()
             } catch (e: IOException) {
-                e.message?.let { Log.d(MainActivity.TAG, it) }
+                e.message?.let { Log.d(MainActivity.Companion.TAG, it) }
             }
         }
     }
@@ -382,12 +379,12 @@ class ResultFragment : Fragment() {
     }
 
     private fun initClicks() {
-        binding.home.setOnClickListener { v: View ->
-            findNavController(v).navigate(R.id.action_resultFragment_to_mainFragment)
+        binding.home.setOnClickListener {
+            it.findNavController().navigate(R.id.action_resultFragment_to_mainFragment)
         }
 
-        binding.reshoot.setOnClickListener { v: View ->
-            findNavController(v).navigate(R.id.action_resultFragment_to_parametersFragment)
+        binding.reshoot.setOnClickListener {
+            it.findNavController().navigate(R.id.action_resultFragment_to_parametersFragment)
         }
 
         binding.done.setOnClickListener { saveToExternal() }

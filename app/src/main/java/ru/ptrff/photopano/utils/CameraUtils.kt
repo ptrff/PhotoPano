@@ -22,7 +22,7 @@ import android.view.TextureView.SurfaceTextureListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import ru.ptrff.photopano.models.Camera
-import ru.ptrff.photopano.views.MainActivity
+import ru.ptrff.photopano.ui.MainActivity
 import java.io.File
 import java.util.stream.Collectors
 import javax.inject.Inject
@@ -186,19 +186,15 @@ class CameraUtils @Inject constructor() {
                     surface: SurfaceTexture,
                     width: Int,
                     height: Int
-                ) {
-                }
+                ) = Unit
 
                 override fun onSurfaceTextureSizeChanged(
                     surface: SurfaceTexture,
                     width: Int,
                     height: Int
-                ) {
-                }
+                ) = Unit
 
-                override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-                    return false
-                }
+                override fun onSurfaceTextureDestroyed(surface: SurfaceTexture) = false
 
                 override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
                     camera.onFrameAcquiredCallback()
@@ -316,7 +312,6 @@ class CameraUtils @Inject constructor() {
             val camera = getCameraById(cameraDevice.id) ?: return
             camera.cameraDevice = cameraDevice
             camera.onOpenedCallback()
-            // TODO opened not closed while updating previews
         }
 
         override fun onClosed(cameraDevice: CameraDevice) {

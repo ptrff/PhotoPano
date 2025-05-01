@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui.parameters
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -14,7 +14,8 @@ import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import com.google.android.material.R
 import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -23,9 +24,9 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import pl.droidsonroids.gif.GifDrawable
-import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentParametersBinding
 import ru.ptrff.photopano.models.Camera
+import ru.ptrff.photopano.ui.MainActivity
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.viewBinding
@@ -38,7 +39,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ParametersFragment : Fragment() {
     private val binding by viewBinding(FragmentParametersBinding::inflate)
-    private var counterDialog: CounterDialog? = null
+    private val counterDialog by fastLazy {
+        CounterDialog(binding.preparationSlider.value.toInt(), cameraCount)
+    }
 
     private val sharedPreferences: SharedPreferences by fastLazy {
         requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -80,15 +83,15 @@ class ParametersFragment : Fragment() {
     }
 
     private fun initClicks() = with(binding) {
-        back.setOnClickListener { findNavController(it).popBackStack() }
+        back.setOnClickListener { it.findNavController().popBackStack() }
 
-        durationSlider.addOnChangeListener { _: Slider?, value: Float, fromUser: Boolean ->
+        durationSlider.addOnChangeListener { _: Slider, value: Float, fromUser: Boolean ->
             if (fromUser) {
-                intervalValue.text = String.format(
+                intervalValue.text = String.Companion.format(
                     Locale.US, "%.2f",
                     value * intervalStep
                 )
-                durationValue.text = String.format(
+                durationValue.text = String.Companion.format(
                     Locale.US, "%.2f",
                     value
                 )
@@ -100,7 +103,7 @@ class ParametersFragment : Fragment() {
             }
         }
 
-        preparationSlider.addOnChangeListener { _: Slider?, value: Float, fromUser: Boolean ->
+        preparationSlider.addOnChangeListener { _: Slider, value: Float, fromUser: Boolean ->
             if (fromUser) {
                 preparationValue.text = value.toInt().toString()
                 editor.putInt("preparation", value.toInt()).apply()
@@ -111,7 +114,7 @@ class ParametersFragment : Fragment() {
             done.isEnabled = false
             val typedValue = TypedValue()
             requireContext().theme.resolveAttribute(
-                com.google.android.material.R.attr.colorOnTertiary,
+                R.attr.colorOnTertiary,
                 typedValue,
                 true
             )
@@ -121,25 +124,20 @@ class ParametersFragment : Fragment() {
             showDialog(typedValue)
         }
 
-        reverse.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+        reverse.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             changeGifType(interpolate.isChecked, isChecked)
         }
 
-        interpolate.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
+        interpolate.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             changeGifType(reverse.isChecked, isChecked)
         }
     }
 
-    private fun showDialog(typedValue: TypedValue) = CounterDialog(
-        binding.preparationSlider.value.toInt(),
-        cameraCount
-    ).apply {
-        counterDialog = this
-
+    private fun showDialog(typedValue: TypedValue) = counterDialog.apply {
         setOnDismissListener {
             binding.done.isEnabled = true
             requireContext().theme.resolveAttribute(
-                com.google.android.material.R.attr.colorTertiaryContainer,
+                R.attr.colorTertiaryContainer,
                 typedValue,
                 true
             )
@@ -169,7 +167,6 @@ class ParametersFragment : Fragment() {
         show()
     }
 
-
     private fun sortCamerasByPack() {
         val cameras = cameraUtils.supportedCameras
         cameraPacks.clear()
@@ -183,11 +180,12 @@ class ParametersFragment : Fragment() {
             cameras[i].let { cameraPacks[packId].add(it) }
         }
 
-        Log.d(MainActivity.TAG, "Pack count: ${cameraUtils.packCount}")
+        Log.d(MainActivity.Companion.TAG, "Pack count: ${cameraUtils.packCount}")
 
         for (packId in 0 until packCount) {
             Log.d(
-                MainActivity.TAG, "Pack: ${packId + 1} cameras: ${
+                MainActivity.Companion.TAG,
+                "Pack: ${packId + 1} cameras: ${
                     cameraPacks[packId].joinToString(", ") { it.id }
                 }"
             )
@@ -200,7 +198,7 @@ class ParametersFragment : Fragment() {
 
         interval = (binding.durationSlider.value * intervalStep * 1000).toInt()
         interval += 500
-        Log.d(MainActivity.TAG, "interval: $interval")
+        Log.d(MainActivity.Companion.TAG, "interval: $interval")
 
         Completable.fromAction {
             var allPacksEmpty = false
@@ -213,9 +211,9 @@ class ParametersFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    Log.d(MainActivity.TAG, "queue prepared")
+                    Log.d(MainActivity.Companion.TAG, "queue prepared")
                 },
-                { error -> error.message?.let { Log.e(MainActivity.TAG, it) } }
+                { error -> error.message?.let { Log.e(MainActivity.Companion.TAG, it) } }
             )
     }
 
@@ -235,15 +233,15 @@ class ParametersFragment : Fragment() {
                     iterationNum++
                 }
             }, { error ->
-                Log.e(MainActivity.TAG, "Camera error: ${error.message}")
-                Log.d(MainActivity.TAG, "Trying continue skipping it")
+                Log.e(MainActivity.Companion.TAG, "Camera error: ${error.message}")
+                Log.d(MainActivity.Companion.TAG, "Trying continue skipping it")
                 iterationNum++
                 if (iterationNum >= cameraCount) {
                     cameraQueueLoop?.dispose()
                     binding.root.post(::shootingComplete)
                 } else {
                     Log.d(
-                        MainActivity.TAG,
+                        MainActivity.Companion.TAG,
                         " iterationNum: $iterationNum cameraCount: $cameraCount"
                     )
                 }
@@ -259,7 +257,7 @@ class ParametersFragment : Fragment() {
             enqueueCamera(c)
 
             Log.d(
-                MainActivity.TAG,
+                MainActivity.Companion.TAG,
                 "added to queue: ${c.id} from pack: ${cameraPacks.indexOf(pack)}"
             )
         }
@@ -271,12 +269,12 @@ class ParametersFragment : Fragment() {
             cameraQueue.offer(camera)
         },
         onFrameAcquiredCallback = {
-            binding.root.post { counterDialog?.nextStep() }
+            binding.root.post { counterDialog.nextStep() }
         },
         onClosedCallback = {
             camera.end = System.currentTimeMillis()
             Log.d(
-                MainActivity.TAG,
+                MainActivity.Companion.TAG,
                 "camera ${camera.id} operated for ${camera.end - camera.start} ms"
             )
             if (cameraQueue.isEmpty() && iterationNum == cameraCount) {
@@ -286,16 +284,15 @@ class ParametersFragment : Fragment() {
         }
     )
 
-
     private fun shootingComplete() {
-        counterDialog?.counterComplete()
+        counterDialog.counterComplete()
         Bundle().apply {
             putFloat("duration", binding.durationSlider.value)
             putBoolean("interpolate", binding.interpolate.isChecked)
             putBoolean("reverse", binding.reverse.isChecked)
             putBoolean("upload", binding.upload.isChecked)
-            findNavController(binding.back)
-                .navigate(R.id.action_global_loadingFragment, this)
+            binding.back.findNavController()
+                .navigate(ru.ptrff.photopano.R.id.action_global_loadingFragment, this)
         }
     }
 
@@ -304,8 +301,8 @@ class ParametersFragment : Fragment() {
             requireContext(),
             intArrayOf(
                 requireContext().getColor(android.R.color.white),
-                requireContext().getColor(R.color.white_alpha_02),
-                requireContext().getColor(R.color.md_theme_background_transparent)
+                requireContext().getColor(ru.ptrff.photopano.R.color.white_alpha_02),
+                requireContext().getColor(ru.ptrff.photopano.R.color.md_theme_background_transparent)
             ),
             floatArrayOf(0f, 0.6f, 1f),
             binding.flashes.measuredWidth,
@@ -336,7 +333,7 @@ class ParametersFragment : Fragment() {
         val initDuration = sharedPreferences.getFloat("duration", 1f)
         durationSlider.value = initDuration
         durationValue.text = initDuration.toString()
-        intervalValue.text = String.format(
+        intervalValue.text = String.Companion.format(
             Locale.US, "%.2f",
             initDuration * intervalStep
         )

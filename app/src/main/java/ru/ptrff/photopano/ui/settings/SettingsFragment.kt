@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.views
+package ru.ptrff.photopano.ui.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import dagger.hilt.android.AndroidEntryPoint
-import ru.ptrff.photopano.adapters.DragNDropCallback
-import ru.ptrff.photopano.adapters.SettingsAdapter
-import ru.ptrff.photopano.adapters.SettingsLayoutManager
 import ru.ptrff.photopano.databinding.FragmentSettingsBinding
+import ru.ptrff.photopano.ui.settings.adapters.DragNDropCallback
+import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter
+import ru.ptrff.photopano.ui.settings.adapters.SettingsLayoutManager
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.viewBinding
@@ -76,9 +76,9 @@ class SettingsFragment : Fragment() {
         }
 
     private fun initClicks() = with(binding) {
-        back.setOnClickListener { v: View ->
+        back.setOnClickListener {
             adapter.stopPreviewing()
-            findNavController(v).popBackStack()
+            it.findNavController().popBackStack()
         }
         updatePreviews.setOnClickListener { adapter.reshoot() }
         saveSequence.setOnClickListener {
