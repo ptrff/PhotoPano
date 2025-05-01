@@ -1,15 +1,17 @@
-package ru.ptrff.photopano.parameters.ui
+package ru.ptrff.photopano.ui.parameters
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.DialogInterface
+import android.content.DialogInterface.OnDismissListener
 import android.content.res.ColorStateList
+import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
+import android.widget.LinearLayout.LayoutParams
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.transition.ChangeBounds
@@ -45,7 +47,7 @@ class CounterDialog(
             .setView(binding.getRoot())
             .create()
 
-    fun setOnDismissListener(onDismissListener: DialogInterface.OnDismissListener) {
+    fun setOnDismissListener(onDismissListener: OnDismissListener) {
         dialog.setOnDismissListener(onDismissListener)
     }
 
@@ -152,11 +154,10 @@ class CounterDialog(
             setInterpolator(DecelerateInterpolator())
             TransitionManager.beginDelayedTransition(binding.root, this)
         }
-        binding.secondsTextLayout.layoutParams =
-            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0)
-        binding.shootingRoot.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
+        binding.secondsTextLayout.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, 0)
+        binding.shootingRoot.layoutParams = LayoutParams(
+            LayoutParams.MATCH_PARENT,
+            LayoutParams.MATCH_PARENT
         )
 
         binding.shootingRoot.animate()
