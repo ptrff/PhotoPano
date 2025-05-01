@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.parameters
+package ru.ptrff.photopano.parameters.presentation
 
 data class ParametersState(
     val shootingDuration: Float = 1f,

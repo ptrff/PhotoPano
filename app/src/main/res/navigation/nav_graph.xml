@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="ru.ptrff.photopano.ui.main.MainFragment"
+        android:name="ru.ptrff.photopano.main.MainFragment"
         android:label="MainFragment">
         <action
             android:id="@+id/action_mainFragment_to_parametersFragment"
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/parametersFragment"
-        android:name="ru.ptrff.photopano.ui.parameters.ParametersFragment"
+        android:name="ru.ptrff.photopano.parameters.ui.ParametersFragment"
         android:label="ParametersFragment">
         <action
             android:id="@+id/action_parametersFragment_to_loadingFragment"
@@ -39,11 +39,11 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="ru.ptrff.photopano.ui.settings.SettingsFragment"
+        android:name="ru.ptrff.photopano.settings.SettingsFragment"
         android:label="SettingsFragment" />
     <fragment
         android:id="@+id/loadingFragment"
-        android:name="ru.ptrff.photopano.ui.loading.LoadingFragment"
+        android:name="ru.ptrff.photopano.loading.LoadingFragment"
         android:label="LoadingFragment">
         <action
             android:id="@+id/action_loadingFragment_to_resultFragment"
@@ -57,7 +57,7 @@
     </fragment>
     <fragment
         android:id="@+id/resultFragment"
-        android:name="ru.ptrff.photopano.ui.result.ResultFragment"
+        android:name="ru.ptrff.photopano.result.ResultFragment"
         android:label="ResultFragment">
         <action
             android:id="@+id/action_resultFragment_to_mainFragment"

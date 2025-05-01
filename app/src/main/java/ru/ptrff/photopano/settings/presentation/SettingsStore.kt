@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.settings
+package ru.ptrff.photopano.settings.presentation
 
 import android.app.Application
 import android.content.Context
@@ -10,18 +10,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import ru.ptrff.photopano.ui.settings.SettingsSideEffects.SpanCountChanged
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.DecreasePackCount
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.IncreasePackCount
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.Initialize
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.SaveSequence
+import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.*
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.*
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.Store
 import ru.ptrff.photopano.utils.fastLazy
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
+class SettingsStore @Inject constructor(
     val app: Application
 ) : Store<SettingsState, SettingsSideEffects, SettingsUiEvents>(app) {
     override val _state = MutableStateFlow(SettingsState())

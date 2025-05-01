@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.result
+package ru.ptrff.photopano.result.presentation
 
 import android.app.Application
 import android.util.Log
@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import ru.ptrff.photopano.ui.result.ResultSideEffects.GenerateAndPasteQR
-import ru.ptrff.photopano.ui.result.ResultUiEvents.UploadGif
+import ru.ptrff.photopano.result.presentation.ResultSideEffects.*
+import ru.ptrff.photopano.result.presentation.ResultUiEvents.*
 import ru.ptrff.photopano.utils.Store
 import ru.ptrff.photopano.utils.Uploader
 import java.io.File
 
-class ResultViewModel(
+class ResultStore(
     val app: Application
 ) : Store<ResultState, ResultSideEffects, ResultUiEvents>(app) {
     override val _state = MutableStateFlow(ResultState())

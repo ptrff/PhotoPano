@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.settings.adapters
+package ru.ptrff.photopano.settings.adapters
 
 import android.annotation.SuppressLint
 import android.graphics.Matrix
@@ -17,11 +17,11 @@ import ru.ptrff.photopano.databinding.ItemSettingCameraBinding
 import ru.ptrff.photopano.databinding.ItemSettingClickableLabelBinding
 import ru.ptrff.photopano.databinding.ItemSettingLabelBinding
 import ru.ptrff.photopano.models.Camera
-import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
-import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.SettingsItem.CameraHolder
-import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.SettingsItem.ClickableLabelHolder
-import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.SettingsItem.LabelHolder
-import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter.ViewType.entries
+import ru.ptrff.photopano.MainActivity.Companion.TAG
+import ru.ptrff.photopano.settings.adapters.SettingsAdapter.SettingsItem.CameraHolder
+import ru.ptrff.photopano.settings.adapters.SettingsAdapter.SettingsItem.ClickableLabelHolder
+import ru.ptrff.photopano.settings.adapters.SettingsAdapter.SettingsItem.LabelHolder
+import ru.ptrff.photopano.settings.adapters.SettingsAdapter.ViewType.entries
 import ru.ptrff.photopano.utils.CameraUtils
 import java.util.Collections
 
@@ -126,9 +126,9 @@ class SettingsAdapter(
         val width = measuredWidth.toFloat()
         val height = measuredHeight.toFloat()
         setTransform(Matrix().apply {
-            postRotate(270F + angle, width / 2f, height / 2f);
-            postScale(width / height, height / width, width / 2f, height / 2f);
-        });
+            postRotate(270F + angle, width / 2f, height / 2f)
+            postScale(width / height, height / width, width / 2f, height / 2f)
+        })
     }
 
     fun stopPreviewing() {

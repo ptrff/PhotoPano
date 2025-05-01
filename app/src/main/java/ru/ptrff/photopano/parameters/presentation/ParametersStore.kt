@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.parameters
+package ru.ptrff.photopano.parameters.presentation
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import ru.ptrff.photopano.models.Camera
-import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
-import ru.ptrff.photopano.ui.parameters.ParametersSideEffects.*
-import ru.ptrff.photopano.ui.parameters.ParametersUiEvents.*
+import ru.ptrff.photopano.MainActivity.Companion.TAG
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.*
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.*
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.Store
 import ru.ptrff.photopano.utils.fastLazy
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class ParametersViewModel @Inject constructor(
+class ParametersStore @Inject constructor(
     val app: Application
 ) : Store<ParametersState, ParametersSideEffects, ParametersUiEvents>(app) {
     override val _state = MutableStateFlow(ParametersState())

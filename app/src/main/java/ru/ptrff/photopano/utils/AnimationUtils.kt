@@ -7,7 +7,7 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import io.reactivex.rxjava3.core.Completable
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.models.Camera
-import ru.ptrff.photopano.ui.MainActivity
+import ru.ptrff.photopano.MainActivity
 import java.io.File
 
 class AnimationUtils(private val context: Context, private val duration: Float) {

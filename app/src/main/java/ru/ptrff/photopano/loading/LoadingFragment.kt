@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.loading
+package ru.ptrff.photopano.loading
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -15,7 +15,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentLoadingBinding
-import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
+import ru.ptrff.photopano.MainActivity.Companion.TAG
 import ru.ptrff.photopano.utils.AnimationUtils
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.viewBinding

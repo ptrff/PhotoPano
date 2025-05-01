@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.settings
+package ru.ptrff.photopano.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,14 +10,14 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import dagger.hilt.android.AndroidEntryPoint
 import ru.ptrff.photopano.databinding.FragmentSettingsBinding
-import ru.ptrff.photopano.ui.settings.SettingsSideEffects.SpanCountChanged
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.DecreasePackCount
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.IncreasePackCount
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.Initialize
-import ru.ptrff.photopano.ui.settings.SettingsUiEvents.SaveSequence
-import ru.ptrff.photopano.ui.settings.adapters.DragNDropCallback
-import ru.ptrff.photopano.ui.settings.adapters.SettingsAdapter
-import ru.ptrff.photopano.ui.settings.adapters.SettingsLayoutManager
+import ru.ptrff.photopano.settings.adapters.DragNDropCallback
+import ru.ptrff.photopano.settings.adapters.SettingsAdapter
+import ru.ptrff.photopano.settings.adapters.SettingsLayoutManager
+import ru.ptrff.photopano.settings.presentation.SettingsSideEffects
+import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.*
+import ru.ptrff.photopano.settings.presentation.SettingsState
+import ru.ptrff.photopano.settings.presentation.SettingsStore
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.*
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
@@ -25,7 +25,7 @@ import ru.ptrff.photopano.utils.viewBinding
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
     private val binding by viewBinding(FragmentSettingsBinding::inflate)
-    private val viewModel by viewModels<SettingsViewModel>()
+    private val viewModel by viewModels<SettingsStore>()
     private val adapter: SettingsAdapter by fastLazy {
         SettingsAdapter(layoutInflater, viewModel.cameraUtils)
     }

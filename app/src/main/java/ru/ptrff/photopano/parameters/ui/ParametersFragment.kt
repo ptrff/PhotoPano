@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.parameters
+package ru.ptrff.photopano.parameters.ui
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -15,19 +15,22 @@ import dagger.hilt.android.AndroidEntryPoint
 import pl.droidsonroids.gif.GifDrawable
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentParametersBinding
-import ru.ptrff.photopano.ui.parameters.ParametersSideEffects.*
-import ru.ptrff.photopano.ui.parameters.ParametersUiEvents.*
+import ru.ptrff.photopano.parameters.presentation.GifType
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.*
+import ru.ptrff.photopano.parameters.presentation.ParametersState
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.*
+import ru.ptrff.photopano.parameters.presentation.ParametersStore
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
 import java.util.Locale
-import com.google.android.material.R as MaterialR
 
 @AndroidEntryPoint
 class ParametersFragment : Fragment() {
     private val binding by viewBinding(FragmentParametersBinding::inflate)
     private lateinit var counterDialog: CounterDialog
 
-    private val viewModel by viewModels<ParametersViewModel>()
+    private val viewModel by viewModels<ParametersStore>()
 
     private val minDuration: Float = 0.5f
     private val maxDuration: Float = 5f
@@ -134,7 +137,8 @@ class ParametersFragment : Fragment() {
 
     private fun render(state: ParametersState) = with(state) {
         binding.durationSlider.value = state.shootingDuration
-        binding.durationValue.text = String.format(Locale.US, "%.2f", state.shootingDuration)
+        binding.durationValue.text =
+            String.Companion.format(Locale.US, "%.2f", state.shootingDuration)
 
         binding.preparationSlider.value = state.prepareDuration.toFloat()
         binding.preparationValue.text = state.prepareDuration.toString()
@@ -170,7 +174,7 @@ class ParametersFragment : Fragment() {
         binding.done.isEnabled = enabled
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(
-            if (enabled) MaterialR.attr.colorTertiaryContainer else MaterialR.attr.colorOnTertiary,
+            if (enabled) com.google.android.material.R.attr.colorTertiaryContainer else com.google.android.material.R.attr.colorOnTertiary,
             typedValue,
             true
         )

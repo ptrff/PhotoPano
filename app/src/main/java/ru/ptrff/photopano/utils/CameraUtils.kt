@@ -23,8 +23,8 @@ import android.view.TextureView.SurfaceTextureListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import ru.ptrff.photopano.models.Camera
-import ru.ptrff.photopano.ui.MainActivity
-import ru.ptrff.photopano.ui.settings.SettingsViewModel
+import ru.ptrff.photopano.MainActivity
+import ru.ptrff.photopano.settings.presentation.SettingsStore
 import java.io.File
 import java.util.stream.Collectors
 import javax.inject.Inject
@@ -35,25 +35,23 @@ class CameraUtils @Inject constructor(
     val app: Application
 ) {
 
-    private lateinit var cameraManager: CameraManager
+    private val cameraManager = app.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     val cameraList: MutableList<Camera> = ArrayList()
 
     private val sharedPreferences: SharedPreferences by fastLazy {
-        app.getSharedPreferences(SettingsViewModel::class.simpleName, Context.MODE_PRIVATE)
+        app.getSharedPreferences(SettingsStore::class.simpleName, Context.MODE_PRIVATE)
     }
     private val editor: SharedPreferences.Editor by fastLazy {
         sharedPreferences.edit()
     }
 
-    private lateinit var temp: File
+    private val temp = File(app.filesDir, "temp")
     var packCount: Int = 1
         private set
 
     fun init() {
-        temp = File(app.filesDir, "temp")
-        cameraManager = app.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        if (!temp.exists()) temp.mkdirs()
 
-        // get list of cameras
         if (ContextCompat.checkSelfPermission(
                 app,
                 Manifest.permission.CAMERA

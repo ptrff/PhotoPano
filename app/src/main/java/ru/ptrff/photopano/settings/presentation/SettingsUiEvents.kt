@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.settings
+package ru.ptrff.photopano.settings.presentation
 
 import android.util.DisplayMetrics
 

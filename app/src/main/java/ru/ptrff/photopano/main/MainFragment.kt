@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.main
+package ru.ptrff.photopano.main
 
 import android.os.Bundle
 import android.view.LayoutInflater

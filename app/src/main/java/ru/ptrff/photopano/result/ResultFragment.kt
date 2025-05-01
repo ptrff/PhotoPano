@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.result
+package ru.ptrff.photopano.result
 
 import android.Manifest
 import android.animation.ObjectAnimator
@@ -52,7 +52,11 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoShap
 import kotlinx.coroutines.launch
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentResultBinding
-import ru.ptrff.photopano.ui.MainActivity
+import ru.ptrff.photopano.MainActivity
+import ru.ptrff.photopano.result.presentation.ResultSideEffects
+import ru.ptrff.photopano.result.presentation.ResultState
+import ru.ptrff.photopano.result.presentation.ResultUiEvents
+import ru.ptrff.photopano.result.presentation.ResultStore
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.viewBinding
 import java.io.File
@@ -65,7 +69,7 @@ import com.google.android.material.R as MaterialR
 
 class ResultFragment : Fragment() {
     private val binding by viewBinding(FragmentResultBinding::inflate)
-    private val viewModel by viewModels<ResultViewModel>()
+    private val viewModel by viewModels<ResultStore>()
     private val upload by fastLazy {
         requireArguments().getBoolean("upload", false)
     }

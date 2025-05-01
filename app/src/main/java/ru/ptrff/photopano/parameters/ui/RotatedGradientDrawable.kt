@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.ui.parameters
+package ru.ptrff.photopano.parameters.ui
 
 import android.content.Context
 import android.graphics.BitmapShader
