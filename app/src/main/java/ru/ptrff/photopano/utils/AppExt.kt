@@ -41,10 +41,10 @@ inline fun <T> fastLazy(
  * An extension fun for quickly subscribe to [Store] state and side effects flows
  * inside [LifecycleOwner] (e.g. [Fragment])
  */
-fun <T, R, E, V : Store<T, R, E>> LifecycleOwner.initObservers(
-    viewModel: V,
-    onStateChanged: (T) -> Unit,
-    onSideEffect: (R) -> Unit
+fun <State, SideEffects, UiEvents, S : Store<State, SideEffects, UiEvents>> LifecycleOwner.initObservers(
+    viewModel: S,
+    onStateChanged: (State) -> Unit,
+    onSideEffect: (SideEffects) -> Unit
 ) = viewModel.viewModelScope.launch {
     repeatOnLifecycle(Lifecycle.State.STARTED) {
         launch { viewModel.state.collect { onStateChanged(it) } }
