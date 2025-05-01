@@ -1,6 +1,7 @@
 package ru.ptrff.photopano.utils
 
 import android.Manifest
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -23,34 +24,38 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import ru.ptrff.photopano.models.Camera
 import ru.ptrff.photopano.ui.MainActivity
+import ru.ptrff.photopano.ui.settings.SettingsViewModel
 import java.io.File
 import java.util.stream.Collectors
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CameraUtils @Inject constructor() {
+class CameraUtils @Inject constructor(
+    val app: Application
+) {
 
     private lateinit var cameraManager: CameraManager
     val cameraList: MutableList<Camera> = ArrayList()
 
-    private lateinit var prefs: SharedPreferences
-
-    private val prefsEditor: SharedPreferences.Editor
-        get() = prefs.edit()
+    private val sharedPreferences: SharedPreferences by fastLazy {
+        app.getSharedPreferences(SettingsViewModel::class.simpleName, Context.MODE_PRIVATE)
+    }
+    private val editor: SharedPreferences.Editor by fastLazy {
+        sharedPreferences.edit()
+    }
 
     private lateinit var temp: File
     var packCount: Int = 1
         private set
 
-    fun init(context: Context) {
-        prefs = context.getSharedPreferences("cameraprefs", Context.MODE_PRIVATE)
-        temp = File(context.filesDir, "temp")
-        cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+    fun init() {
+        temp = File(app.filesDir, "temp")
+        cameraManager = app.getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
         // get list of cameras
         if (ContextCompat.checkSelfPermission(
-                context,
+                app,
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -69,27 +74,29 @@ class CameraUtils @Inject constructor() {
 
     fun saveCameraList(packCount: Int) {
         this.packCount = packCount
-        prefsEditor.putInt("packCount", packCount)
+        editor.putInt("packCount", packCount)
 
-        prefsEditor.putString(
+        editor.putString(
             "cameralist",
             cameraList
                 .stream()
                 .map { camera -> camera.id }
                 .collect(Collectors.joining(","))
         )
-        prefsEditor.commit()
-        Log.d(MainActivity.TAG, "Camera list saved")
+        editor.apply()
+        Log.d(MainActivity.TAG, "Camera list saved, pack count: $packCount")
     }
 
     fun restoreCameraList() {
-        if (!prefs.contains("cameralist")) {
+        if (!sharedPreferences.contains("cameralist")) {
             return
         }
 
-        packCount = prefs.getInt("packCount", 1)
+        packCount = sharedPreferences.getInt("packCount", 1)
 
-        val ids = prefs.getString("cameralist", "")!!.split(",").filterNot { it.isEmpty() }
+        val ids = sharedPreferences.getString("cameralist", "")!!
+            .split(",")
+            .filterNot { it.isEmpty() }
         val currentListIds = cameraList.map { camera -> camera.id }.toMutableList()
 
         Log.d(MainActivity.TAG, "Restoring camera list: ")
@@ -123,9 +130,9 @@ class CameraUtils @Inject constructor() {
         return camera
     }
 
-    fun reInit(context: Context) {
+    fun reInit() {
         cameraList.clear()
-        init(context)
+        init()
     }
 
     fun openCapture(

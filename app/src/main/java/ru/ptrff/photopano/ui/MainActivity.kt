@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            cameraUtils.init(this)
+            cameraUtils.init()
         } else {
             Snackbar.make(
                 findViewById(AndroidR.id.content),

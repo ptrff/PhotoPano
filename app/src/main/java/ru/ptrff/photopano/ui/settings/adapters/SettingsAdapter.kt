@@ -1,7 +1,6 @@
 package ru.ptrff.photopano.ui.settings.adapters
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Matrix
 import android.util.Log
 import android.view.LayoutInflater
@@ -82,7 +81,7 @@ class SettingsAdapter(
         binding.description.setText(R.string.click_to_rescan)
         binding.clickableRoot.setOnClickListener {
             if (!reIniting) {
-                reInit(binding.getRoot().context)
+                reInit()
             }
         }
     }
@@ -163,12 +162,12 @@ class SettingsAdapter(
         return true
     }
 
-    private fun reInit(context: Context) {
+    private fun reInit() {
         reIniting = true
 
         val countBefore = cameraUtils.cameraCount
         stopPreviewing()
-        cameraUtils.reInit(context)
+        cameraUtils.reInit()
         val countAfter = cameraUtils.cameraCount
         if (countBefore > countAfter) {
             notifyItemRangeRemoved(countAfter, countBefore)
