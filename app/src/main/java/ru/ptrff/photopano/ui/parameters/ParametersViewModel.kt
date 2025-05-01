@@ -30,8 +30,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class ParametersViewModel @Inject constructor(val app: Application) :
-    Store<ParametersState, ParametersSideEffects, ParametersUiEvents>(app) {
+class ParametersViewModel @Inject constructor(
+    val app: Application
+) : Store<ParametersState, ParametersSideEffects, ParametersUiEvents>(app) {
     override val _state = MutableStateFlow(ParametersState())
     override val state = _state.asStateFlow()
 
@@ -42,7 +43,7 @@ class ParametersViewModel @Inject constructor(val app: Application) :
     lateinit var cameraUtils: CameraUtils
 
     private val sharedPreferences: SharedPreferences by fastLazy {
-        app.getSharedPreferences("parameters", Context.MODE_PRIVATE)
+        app.getSharedPreferences(javaClass.simpleName, Context.MODE_PRIVATE)
     }
     private val editor: SharedPreferences.Editor
         get() = sharedPreferences.edit()
@@ -55,7 +56,7 @@ class ParametersViewModel @Inject constructor(val app: Application) :
         is OnReverseChange -> changeGifType(state.value.interpolate, event.isActive)
         is OnUploadChange -> _state.update { it.copy(upload = event.isActive) }
         is OnDoneClicked -> {
-            _sideEffect.trySend(
+            sideEffects(
                 ShowCounterDialog(
                     prepareTime = state.value.prepareDuration,
                     cameraCount = cameraUtils.supportedCameraCount
@@ -179,7 +180,7 @@ class ParametersViewModel @Inject constructor(val app: Application) :
                     iterationNum++
                     if (iterationNum >= cameraUtils.supportedCameraCount) {
                         cameraQueueLoop?.dispose()
-                        _sideEffect.trySend(ShootingComplete)
+                        sideEffects(ShootingComplete)
                     } else {
                         Log.d(
                             TAG,
@@ -211,7 +212,7 @@ class ParametersViewModel @Inject constructor(val app: Application) :
             cameraQueue.offer(camera)
         },
         onFrameAcquiredCallback = {
-            _sideEffect.trySend(NextShootingStep)
+            sideEffects(NextShootingStep)
         },
         onClosedCallback = {
             camera.end = System.currentTimeMillis()

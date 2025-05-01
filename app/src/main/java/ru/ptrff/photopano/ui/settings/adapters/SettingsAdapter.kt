@@ -51,7 +51,7 @@ class SettingsAdapter(
     override fun onBindViewHolder(
         holder: SettingsItem,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: List<Any>
     ) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position)
