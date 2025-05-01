@@ -8,14 +8,11 @@ import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
-import com.amazonaws.regions.Region
-import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
 import ru.ptrff.photopano.BuildConfig
 import ru.ptrff.photopano.ui.MainActivity.Companion.TAG
 import java.io.File
-import java.net.URL
 import java.util.Date
 import java.util.UUID
 
@@ -49,10 +46,10 @@ class Uploader {
         }
     }
 
-    val fileUrl: URL
+    val fileUrl: String
         get() {
             val request = GeneratePresignedUrlRequest(BuildConfig.BUCKET_NAME, key)
             request.expiration = Date(System.currentTimeMillis() + 3600 * 1000)
-            return s3client.generatePresignedUrl(request)
+            return s3client.generatePresignedUrl(request).toString()
         }
 }

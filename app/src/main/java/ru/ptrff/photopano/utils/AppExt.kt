@@ -38,10 +38,10 @@ inline fun <T> fastLazy(
 }
 
 /**
- * An extension fun for quickly subscribe to [PanoViewModel] state and side effects flows
+ * An extension fun for quickly subscribe to [Store] state and side effects flows
  * inside [LifecycleOwner] (e.g. [Fragment])
  */
-fun <T, R, V : PanoViewModel<T, R>> LifecycleOwner.initObservers(
+fun <T, R, E, V : Store<T, R, E>> LifecycleOwner.initObservers(
     viewModel: V,
     onStateChanged: (T) -> Unit,
     onSideEffect: (R) -> Unit
