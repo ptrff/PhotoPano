@@ -1,16 +1,14 @@
-package ru.ptrff.photopano.ui.parameters
+package ru.ptrff.photopano.parameters.ui
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.DialogInterface.OnDismissListener
 import android.content.res.ColorStateList
-import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -91,7 +89,7 @@ class CounterDialog(
         root.removeView(topText)
         secondsTextLayout.removeView(secondsText)
         root.removeView(bottomText)
-        secondsTextLayout.layoutParams = LinearLayout.LayoutParams(
+        secondsTextLayout.layoutParams = LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )

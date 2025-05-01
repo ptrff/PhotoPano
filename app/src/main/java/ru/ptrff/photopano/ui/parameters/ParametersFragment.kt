@@ -15,8 +15,23 @@ import dagger.hilt.android.AndroidEntryPoint
 import pl.droidsonroids.gif.GifDrawable
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentParametersBinding
-import ru.ptrff.photopano.ui.parameters.ParametersSideEffects.*
-import ru.ptrff.photopano.ui.parameters.ParametersUiEvents.*
+import ru.ptrff.photopano.parameters.presentation.GifType
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.NextShootingStep
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShootingComplete
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShowCounterDialog
+import ru.ptrff.photopano.parameters.presentation.ParametersState
+import ru.ptrff.photopano.parameters.presentation.ParametersStore
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.Initialize
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogDismiss
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogFinish
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnDoneClicked
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnInterpolateChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnPrepareDurationChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnReverseChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnShootingDurationChange
+import ru.ptrff.photopano.parameters.ui.CounterDialog
+import ru.ptrff.photopano.parameters.ui.RotatedGradientDrawable
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
 import java.util.Locale
@@ -27,7 +42,7 @@ class ParametersFragment : Fragment() {
     private val binding by viewBinding(FragmentParametersBinding::inflate)
     private lateinit var counterDialog: CounterDialog
 
-    private val viewModel by viewModels<ParametersViewModel>()
+    private val viewModel by viewModels<ParametersStore>()
 
     private val minDuration: Float = 0.5f
     private val maxDuration: Float = 5f
