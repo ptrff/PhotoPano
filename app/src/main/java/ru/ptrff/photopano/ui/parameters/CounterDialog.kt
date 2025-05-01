@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
+import android.widget.LinearLayout.LayoutParams
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.transition.ChangeBounds
@@ -153,11 +154,10 @@ class CounterDialog(
             setInterpolator(DecelerateInterpolator())
             TransitionManager.beginDelayedTransition(binding.root, this)
         }
-        binding.secondsTextLayout.layoutParams =
-            LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0)
-        binding.shootingRoot.layoutParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+        binding.secondsTextLayout.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, 0)
+        binding.shootingRoot.layoutParams = LayoutParams(
+            LayoutParams.MATCH_PARENT,
+            LayoutParams.MATCH_PARENT
         )
 
         binding.shootingRoot.animate()
