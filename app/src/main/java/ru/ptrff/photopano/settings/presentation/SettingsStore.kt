@@ -9,9 +9,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.*
-import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.*
+import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.SpanCountChanged
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.DecreasePackCount
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.IncreasePackCount
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.Initialize
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.SaveSequence
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.Store
 import ru.ptrff.photopano.utils.fastLazy

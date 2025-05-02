@@ -16,11 +16,20 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import ru.ptrff.photopano.models.Camera
 import ru.ptrff.photopano.MainActivity.Companion.TAG
-import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.*
-import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.*
+import ru.ptrff.photopano.models.Camera
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.NextShootingStep
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShootingComplete
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShowCounterDialog
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.Initialize
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogDismiss
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogFinish
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnDoneClicked
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnInterpolateChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnPrepareDurationChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnReverseChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnShootingDurationChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnUploadChange
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.Store
 import ru.ptrff.photopano.utils.fastLazy
@@ -180,7 +189,7 @@ class ParametersStore @Inject constructor(
                     iterationNum++
                     if (iterationNum >= cameraUtils.supportedCameraCount) {
                         cameraQueueLoop?.dispose()
-                        sideEffects(ShootingComplete)
+                        sideEffects(ShootingComplete(state.value))
                     } else {
                         Log.d(
                             TAG,
@@ -222,7 +231,7 @@ class ParametersStore @Inject constructor(
             )
             if (cameraQueue.isEmpty() && iterationNum == cameraUtils.supportedCameraCount) {
                 cameraQueueLoop?.dispose()
-                _sideEffect.trySend(ShootingComplete)
+                sideEffects(ShootingComplete(state.value))
             }
         }
     )

@@ -8,9 +8,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import ru.ptrff.photopano.result.presentation.ResultSideEffects.*
-import ru.ptrff.photopano.result.presentation.ResultUiEvents.*
+import ru.ptrff.photopano.result.presentation.ResultSideEffects.GenerateAndPasteQR
+import ru.ptrff.photopano.result.presentation.ResultUiEvents.UploadGif
 import ru.ptrff.photopano.utils.Store
 import ru.ptrff.photopano.utils.Uploader
 import java.io.File
@@ -36,7 +35,7 @@ class ResultStore(
             object : TransferListener {
                 override fun onStateChanged(id: Int, state: TransferState) {
                     if (TransferState.COMPLETED == state) {
-                        _sideEffect.trySend(GenerateAndPasteQR(uploader.fileUrl))
+                        sideEffects(GenerateAndPasteQR(uploader.fileUrl))
                         state { it.copy(progress = 100) }
                         Log.d("Uploader", "uplodaing complete")
                     }

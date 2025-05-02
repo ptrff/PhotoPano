@@ -17,10 +17,20 @@ import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentParametersBinding
 import ru.ptrff.photopano.parameters.presentation.GifType
 import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects
-import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.*
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.NextShootingStep
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShootingComplete
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShowCounterDialog
 import ru.ptrff.photopano.parameters.presentation.ParametersState
-import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.*
 import ru.ptrff.photopano.parameters.presentation.ParametersStore
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.Initialize
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogDismiss
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogFinish
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnDoneClicked
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnInterpolateChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnPrepareDurationChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnReverseChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnShootingDurationChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnUploadChange
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
 import java.util.Locale
@@ -85,6 +95,10 @@ class ParametersFragment : Fragment() {
         interpolate.setOnCheckedChangeListener { _, isChecked ->
             store.onEvent(OnInterpolateChange(isChecked))
         }
+
+        upload.setOnCheckedChangeListener { _, isChecked ->
+            store.onEvent(OnUploadChange(isChecked))
+        }
     }
 
     private fun showDialog(prepareTime: Int, cameraCount: Int) {
@@ -117,15 +131,14 @@ class ParametersFragment : Fragment() {
         }
     }
 
-    private fun shootingComplete() {
+    private fun shootingComplete(state: ParametersState) {
         counterDialog.counterComplete()
         Bundle().apply {
-            putFloat("duration", binding.durationSlider.value)
-            putBoolean("interpolate", binding.interpolate.isChecked)
-            putBoolean("reverse", binding.reverse.isChecked)
-            putBoolean("upload", binding.upload.isChecked)
-            binding.back.findNavController()
-                .navigate(R.id.action_global_loadingFragment, this)
+            putFloat("duration", state.shootingDuration)
+            putBoolean("interpolate", state.interpolate)
+            putBoolean("reverse", state.reverse)
+            putBoolean("upload", state.upload)
+            binding.back.findNavController().navigate(R.id.action_global_loadingFragment, this)
         }
     }
 
@@ -156,7 +169,7 @@ class ParametersFragment : Fragment() {
             showDialog(sideEffect.prepareTime, sideEffect.cameraCount)
         }
 
-        is ShootingComplete -> shootingComplete()
+        is ShootingComplete -> shootingComplete(sideEffect.state)
         is NextShootingStep -> counterDialog.nextStep()
     }
 
