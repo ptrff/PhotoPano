@@ -45,7 +45,7 @@ class SettingsStore @Inject constructor(
         is SaveSequence -> cameraUtils.saveCameraList(state.value.packCount)
     }
 
-    private fun restorePackCount() = _state.update {
+    private fun restorePackCount() = state {
         it.copy(packCount = sharedPreferences.getInt("packCount", it.packCount))
     }
 
@@ -55,7 +55,7 @@ class SettingsStore @Inject constructor(
         maxPackCount: Int = 9
     ) {
         val packCount = if (increase) state.value.packCount + 1 else state.value.packCount - 1
-        _state.update {
+        state {
             it.copy(packCount = packCount.coerceIn(minPackCount, maxPackCount))
         }
     }

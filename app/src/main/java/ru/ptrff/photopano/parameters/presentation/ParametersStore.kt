@@ -54,7 +54,7 @@ class ParametersStore @Inject constructor(
         is OnPrepareDurationChange -> changePrepareDuration(event.value)
         is OnInterpolateChange -> changeGifType(event.isActive, state.value.reverse)
         is OnReverseChange -> changeGifType(state.value.interpolate, event.isActive)
-        is OnUploadChange -> _state.update { it.copy(upload = event.isActive) }
+        is OnUploadChange -> state { it.copy(upload = event.isActive) }
         is OnDoneClicked -> {
             sideEffects(
                 ShowCounterDialog(
@@ -72,7 +72,7 @@ class ParametersStore @Inject constructor(
     private fun initialize() {
         val initDuration = sharedPreferences.getFloat("duration", 1f)
         val initPreparation = sharedPreferences.getInt("preparation", 3)
-        _state.update {
+        state {
             it.copy(
                 shootingDuration = initDuration,
                 prepareDuration = initPreparation
@@ -81,16 +81,16 @@ class ParametersStore @Inject constructor(
     }
 
     private fun changeShootingDuration(value: Float) {
-        _state.update { it.copy(shootingDuration = value) }
+        state { it.copy(shootingDuration = value) }
         editor.putFloat("duration", value).apply()
     }
 
     private fun changePrepareDuration(value: Int) {
-        _state.update { it.copy(prepareDuration = value) }
+        state { it.copy(prepareDuration = value) }
         editor.putInt("preparation", value.toInt()).apply()
     }
 
-    private fun changeGifType(isInterpolated: Boolean, isReversed: Boolean) = _state.update {
+    private fun changeGifType(isInterpolated: Boolean, isReversed: Boolean) = state {
         it.copy(
             interpolate = isInterpolated,
             reverse = isReversed,

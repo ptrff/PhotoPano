@@ -37,7 +37,7 @@ class ResultStore(
                 override fun onStateChanged(id: Int, state: TransferState) {
                     if (TransferState.COMPLETED == state) {
                         _sideEffect.trySend(GenerateAndPasteQR(uploader.fileUrl))
-                        _state.update { it.copy(progress = 100) }
+                        state { it.copy(progress = 100) }
                         Log.d("Uploader", "uplodaing complete")
                     }
                 }
@@ -45,12 +45,12 @@ class ResultStore(
                 override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
                     val percent =
                         ((bytesCurrent.toFloat() / bytesTotal.toFloat()) * 100).toInt()
-                    _state.update { it.copy(progress = percent) }
+                    state { it.copy(progress = percent) }
                     Log.d("Uploader", "uplodaing: $percent%")
                 }
 
                 override fun onError(id: Int, ex: Exception) {
-                    _state.update { it.copy(progress = -1) }
+                    state { it.copy(progress = -1) }
                     Log.e("Uploader", "Error during upload", ex)
                 }
             }
