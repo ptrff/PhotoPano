@@ -118,7 +118,7 @@ class ParametersFragment : Fragment() {
 
             startShootingCallback = {
                 binding.flashes.animate()
-                    .alpha(0.4f)
+                    .alpha(0.6f)
                     .setInterpolator(LinearInterpolator())
                     .setDuration(1000)
                     .start()
@@ -199,7 +199,7 @@ class ParametersFragment : Fragment() {
             RotatedGradientDrawable(
                 context = this,
                 colors = intArrayOf(
-                    getColor(android.R.color.white),
+                    getColor(R.color.md_theme_primaryContainer_highContrast),
                     getColor(R.color.white_alpha_02),
                     getColor(R.color.md_theme_background_transparent)
                 ),
