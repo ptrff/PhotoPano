@@ -40,9 +40,9 @@ class MainFragment : Fragment() {
         backgroundAnimationRunning = true
 
         // Dotted circles
-        animateS1()
-        animateS2()
-        animateS3()
+        animateCircle(binding.circleS1, 300000)
+        animateCircle(binding.circleS2, 180000)
+        animateCircle(binding.circleS3, 100000)
 
         // Motivation text
         animateMotivationText()
@@ -56,51 +56,29 @@ class MainFragment : Fragment() {
         motivationText.clearAnimation()
     }
 
-    private fun animateMotivationText() {
+    private fun animateMotivationText() = with(binding.motivationText) {
         if (!backgroundAnimationRunning) return
 
-        if (binding.motivationText.text.toString().endsWith("|")) {
-            binding.motivationText.setText(R.string.motivation_text)
+        if (text.endsWith("|")) {
+            setText(R.string.motivation_text)
         } else {
-            binding.motivationText.append(" |")
+            append(" |")
         }
 
-        binding.motivationText.animate()
-            .withEndAction { this.animateMotivationText() }
+        animate()
+            .withEndAction(::animateMotivationText)
             .setDuration(600)
             .start()
     }
 
-    private fun animateS3() {
+    private fun animateCircle(circle: View, duration: Long) {
         if (!backgroundAnimationRunning) return
 
-        binding.circleS3.animate()
+        circle.animate()
             .rotationBy(360f)
-            .setDuration(100000)
+            .setDuration(duration)
             .setInterpolator(LinearInterpolator())
-            .withEndAction { this.animateS3() }
-            .start()
-    }
-
-    private fun animateS2() {
-        if (!backgroundAnimationRunning) return
-
-        binding.circleS2.animate()
-            .rotationBy(360f)
-            .setDuration(180000)
-            .setInterpolator(LinearInterpolator())
-            .withEndAction { this.animateS2() }
-            .start()
-    }
-
-    private fun animateS1() {
-        if (!backgroundAnimationRunning) return
-
-        binding.circleS1.animate()
-            .rotationBy(360f)
-            .setDuration(300000)
-            .setInterpolator(LinearInterpolator())
-            .withEndAction { this.animateS1() }
+            .withEndAction { animateCircle(circle, duration) }
             .start()
     }
 
