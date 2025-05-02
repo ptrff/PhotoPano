@@ -25,9 +25,9 @@ import ru.ptrff.photopano.utils.viewBinding
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
     private val binding by viewBinding(FragmentSettingsBinding::inflate)
-    private val viewModel by viewModels<SettingsStore>()
+    private val store by viewModels<SettingsStore>()
     private val adapter: SettingsAdapter by fastLazy {
-        SettingsAdapter(layoutInflater, viewModel.cameraUtils)
+        SettingsAdapter(layoutInflater, store.cameraUtils)
     }
 
     override fun onCreateView(
@@ -42,11 +42,11 @@ class SettingsFragment : Fragment() {
         initClicks()
 
         initObservers(
-            viewModel,
+            store,
             onStateChanged = ::render,
             onSideEffect = ::handleSideEffects
         ).also {
-            viewModel.onEvent(Initialize(resources.displayMetrics))
+            store.onEvent(Initialize(resources.displayMetrics))
         }
     }
 
@@ -76,13 +76,13 @@ class SettingsFragment : Fragment() {
         }
         updatePreviews.setOnClickListener { adapter.reshoot() }
         saveSequence.setOnClickListener {
-            viewModel.onEvent(SaveSequence)
+            store.onEvent(SaveSequence)
         }
         packsLess.setOnClickListener {
-            viewModel.onEvent(DecreasePackCount)
+            store.onEvent(DecreasePackCount)
         }
         packsMore.setOnClickListener {
-            viewModel.onEvent(IncreasePackCount)
+            store.onEvent(IncreasePackCount)
         }
     }
 }

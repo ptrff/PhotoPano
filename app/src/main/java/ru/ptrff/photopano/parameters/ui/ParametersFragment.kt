@@ -30,7 +30,7 @@ class ParametersFragment : Fragment() {
     private val binding by viewBinding(FragmentParametersBinding::inflate)
     private lateinit var counterDialog: CounterDialog
 
-    private val viewModel by viewModels<ParametersStore>()
+    private val store by viewModels<ParametersStore>()
 
     private val minDuration: Float = 0.5f
     private val maxDuration: Float = 5f
@@ -49,11 +49,11 @@ class ParametersFragment : Fragment() {
         initSliders()
 
         initObservers(
-            viewModel,
+            store,
             onStateChanged = ::render,
             onSideEffect = ::handleSideEffects
         ).also {
-            viewModel.onEvent(Initialize)
+            store.onEvent(Initialize)
         }
     }
 
@@ -64,26 +64,26 @@ class ParametersFragment : Fragment() {
 
         durationSlider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
-                viewModel.onEvent(OnShootingDurationChange(value))
+                store.onEvent(OnShootingDurationChange(value))
             }
         }
 
         preparationSlider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
-                viewModel.onEvent(OnPrepareDurationChange(value.toInt()))
+                store.onEvent(OnPrepareDurationChange(value.toInt()))
             }
         }
 
         done.setOnClickListener {
-            viewModel.onEvent(OnDoneClicked)
+            store.onEvent(OnDoneClicked)
         }
 
         reverse.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.onEvent(OnReverseChange(isChecked))
+            store.onEvent(OnReverseChange(isChecked))
         }
 
         interpolate.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.onEvent(OnInterpolateChange(isChecked))
+            store.onEvent(OnInterpolateChange(isChecked))
         }
     }
 
@@ -91,7 +91,7 @@ class ParametersFragment : Fragment() {
         counterDialog = CounterDialog(prepareTime, cameraCount, layoutInflater).apply {
             setOnDismissListener {
                 changeDoneButtonState(enabled = true)
-                viewModel.onEvent(OnCounterDialogDismiss)
+                store.onEvent(OnCounterDialogDismiss)
             }
 
             fadeOutParametersCallback = { duration: Int ->
@@ -110,7 +110,7 @@ class ParametersFragment : Fragment() {
                     .start()
 
                 startFlashes(cameraCount)
-                viewModel.onEvent(OnCounterDialogFinish)
+                store.onEvent(OnCounterDialogFinish)
             }
 
             show()

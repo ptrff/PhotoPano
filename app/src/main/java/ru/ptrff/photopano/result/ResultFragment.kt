@@ -69,7 +69,7 @@ import com.google.android.material.R as MaterialR
 
 class ResultFragment : Fragment() {
     private val binding by viewBinding(FragmentResultBinding::inflate)
-    private val viewModel by viewModels<ResultStore>()
+    private val store by viewModels<ResultStore>()
     private val upload by fastLazy {
         requireArguments().getBoolean("upload", false)
     }
@@ -93,17 +93,17 @@ class ResultFragment : Fragment() {
 
     private fun uploadGif(file: File) {
         if (upload) {
-            viewModel.onEvent(ResultUiEvents.UploadGif(file))
+            store.onEvent(ResultUiEvents.UploadGif(file))
         } else {
             binding.uploading.setText(R.string.upload_to_cloud)
             binding.uploading.setOnClickListener { v: View? ->
                 binding.uploading.setText(R.string.uploading)
-                viewModel.onEvent(ResultUiEvents.UploadGif(file))
+                store.onEvent(ResultUiEvents.UploadGif(file))
             }
         }
     }
 
-    private fun initObservers() = with(viewModel) {
+    private fun initObservers() = with(store) {
         viewModelScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { state.collect { render(it) } }
