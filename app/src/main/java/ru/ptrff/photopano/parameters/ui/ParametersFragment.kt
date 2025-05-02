@@ -60,11 +60,10 @@ class ParametersFragment : Fragment() {
 
         initObservers(
             store,
+            initUiEvents = listOf(Initialize),
             onStateChanged = ::render,
             onSideEffect = ::handleSideEffects
-        ).also {
-            store.onEvent(Initialize)
-        }
+        )
     }
 
     private fun initClicks() = with(binding) {

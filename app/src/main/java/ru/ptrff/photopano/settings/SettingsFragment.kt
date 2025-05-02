@@ -14,10 +14,13 @@ import ru.ptrff.photopano.settings.adapters.DragNDropCallback
 import ru.ptrff.photopano.settings.adapters.SettingsAdapter
 import ru.ptrff.photopano.settings.adapters.SettingsLayoutManager
 import ru.ptrff.photopano.settings.presentation.SettingsSideEffects
-import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.*
+import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.SpanCountChanged
 import ru.ptrff.photopano.settings.presentation.SettingsState
 import ru.ptrff.photopano.settings.presentation.SettingsStore
-import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.*
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.DecreasePackCount
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.IncreasePackCount
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.Initialize
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.SaveSequence
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
@@ -43,11 +46,10 @@ class SettingsFragment : Fragment() {
 
         initObservers(
             store,
+            initUiEvents = listOf(Initialize(resources.displayMetrics)),
             onStateChanged = ::render,
             onSideEffect = ::handleSideEffects
-        ).also {
-            store.onEvent(Initialize(resources.displayMetrics))
-        }
+        )
     }
 
     private fun render(state: SettingsState) = with(state) {
