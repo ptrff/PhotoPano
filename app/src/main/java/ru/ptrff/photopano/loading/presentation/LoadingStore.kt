@@ -18,7 +18,6 @@ import ru.ptrff.photopano.loading.presentation.LoadingSideEffects.ChangeAnimatio
 import ru.ptrff.photopano.loading.presentation.LoadingSideEffects.ProcessingDone
 import ru.ptrff.photopano.loading.presentation.LoadingUiEvents.ProcessArguments
 import ru.ptrff.photopano.loading.presentation.LoadingUiEvents.StartProcessing
-import ru.ptrff.photopano.utils.AnimationUtils
 import ru.ptrff.photopano.utils.CameraUtils
 import ru.ptrff.photopano.utils.Store
 import java.io.File

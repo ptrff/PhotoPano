@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.utils
+package ru.ptrff.photopano.result.presentation
 
 import android.content.Context
 import android.util.Log

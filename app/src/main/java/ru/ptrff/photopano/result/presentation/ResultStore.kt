@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import ru.ptrff.photopano.result.presentation.ResultSideEffects.GenerateAndPasteQR
 import ru.ptrff.photopano.result.presentation.ResultUiEvents.UploadGif
 import ru.ptrff.photopano.utils.Store
-import ru.ptrff.photopano.utils.Uploader
 import java.io.File
 
 class ResultStore(

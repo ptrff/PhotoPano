@@ -1,4 +1,4 @@
-package ru.ptrff.photopano.utils
+package ru.ptrff.photopano.loading.presentation
 
 import android.graphics.Bitmap
 import android.util.Log
