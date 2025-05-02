@@ -42,12 +42,12 @@ inline fun <T> fastLazy(
  * inside [LifecycleOwner] (e.g. [Fragment])
  */
 fun <State, SideEffects, UiEvents, S : Store<State, SideEffects, UiEvents>> LifecycleOwner.initObservers(
-    viewModel: S,
+    store: S,
     onStateChanged: (State) -> Unit,
     onSideEffect: (SideEffects) -> Unit
-) = viewModel.viewModelScope.launch {
+) = store.viewModelScope.launch {
     repeatOnLifecycle(Lifecycle.State.STARTED) {
-        launch { viewModel.state.collect { onStateChanged(it) } }
-        launch { viewModel.sideEffect.collect { onSideEffect(it) } }
+        launch { store.state.collect { onStateChanged(it) } }
+        launch { store.sideEffect.collect { onSideEffect(it) } }
     }
 }
