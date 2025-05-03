@@ -125,15 +125,14 @@
             android:id="@+id/shooting_progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="6dp"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
             android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/shooting_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/shooting_text"
-            android:layout_marginBottom="6dp"
-            android:layout_marginStart="8dp"
-            android:text="(3/4)" />
+            app:layout_constraintStart_toEndOf="@id/shooting_text" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/shooting_progress"

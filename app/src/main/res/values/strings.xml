@@ -58,4 +58,5 @@
     <string name="upload_to_cloud">Загрузить в облако</string>
     <string name="well_errors">Чтож, будут ошибки..</string>
     <string name="download">Загрузить</string>
+    <string name="your_gif">Ваша гифка</string>
 </resources>

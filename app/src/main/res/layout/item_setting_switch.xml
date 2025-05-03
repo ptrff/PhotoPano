@@ -44,8 +44,6 @@
                 android:text="@string/parameters_hidden"
                 android:textColor="?colorOnBackground"
                 android:textSize="12sp" />
-
-
         </LinearLayout>
 
         <com.google.android.material.materialswitch.MaterialSwitch
