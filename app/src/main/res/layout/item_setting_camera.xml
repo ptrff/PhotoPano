@@ -36,9 +36,9 @@
                     style="?materialCardViewFilledStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
-                    android:alpha="0.5"
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="2dp"
+                    android:alpha="0.5"
                     app:cardBackgroundColor="@color/background_alpha_095"
                     app:cardCornerRadius="8dp">
 
@@ -51,8 +51,8 @@
                         <ImageView
                             android:layout_width="12dp"
                             android:layout_height="match_parent"
-                            android:paddingBottom="3dp"
                             android:paddingTop="4dp"
+                            android:paddingBottom="3dp"
                             android:src="@drawable/ic_number"
                             app:tint="?colorOnBackground" />
 
@@ -60,13 +60,14 @@
                             android:id="@+id/num"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_marginEnd="2dp"
                             android:elegantTextHeight="true"
                             android:gravity="center"
                             android:textColor="?colorOnBackground"
                             android:textSize="10sp"
-                            android:layout_marginEnd="2dp"
                             android:textStyle="bold"
                             android:translationY="-0.4dp"
+                            tools:ignore="SmallSp"
                             tools:text="1" />
 
                     </LinearLayout>

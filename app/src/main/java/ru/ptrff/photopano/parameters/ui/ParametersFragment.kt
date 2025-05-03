@@ -34,6 +34,7 @@ import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnUploadCha
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
 import java.util.Locale
+import com.google.android.material.R as MaterialR
 
 @AndroidEntryPoint
 class ParametersFragment : Fragment() {
@@ -186,7 +187,7 @@ class ParametersFragment : Fragment() {
         binding.done.isEnabled = enabled
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(
-            if (enabled) com.google.android.material.R.attr.colorTertiaryContainer else com.google.android.material.R.attr.colorOnTertiary,
+            if (enabled) MaterialR.attr.colorTertiaryContainer else MaterialR.attr.colorOnTertiary,
             typedValue,
             true
         )

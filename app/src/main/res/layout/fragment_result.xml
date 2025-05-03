@@ -114,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:fontFamily="@font/raleway_medium"
-                    android:text="Ваша гифка"
+                    android:text="@string/your_gif"
                     android:textColor="?colorOnBackground"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toTopOf="@id/arrow"
@@ -257,8 +257,9 @@
             android:id="@+id/result_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout_height="240dp"
-            android:background="?colorPrimaryContainer" />
+            android:background="?colorPrimaryContainer"
+            android:contentDescription="@string/animation_done"
+            tools:layout_height="240dp" />
 
     </androidx.cardview.widget.CardView>
 
