@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 abstract class Store<State, SideEffects, UiEvents>(
@@ -24,4 +25,6 @@ abstract class Store<State, SideEffects, UiEvents>(
             _sideEffect.send(it)
         }
     }
+
+    fun state(newState: (State) -> State) = _state.update { newState(it) }
 }

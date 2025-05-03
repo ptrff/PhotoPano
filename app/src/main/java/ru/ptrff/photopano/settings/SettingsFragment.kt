@@ -14,10 +14,13 @@ import ru.ptrff.photopano.settings.adapters.DragNDropCallback
 import ru.ptrff.photopano.settings.adapters.SettingsAdapter
 import ru.ptrff.photopano.settings.adapters.SettingsLayoutManager
 import ru.ptrff.photopano.settings.presentation.SettingsSideEffects
-import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.*
+import ru.ptrff.photopano.settings.presentation.SettingsSideEffects.SpanCountChanged
 import ru.ptrff.photopano.settings.presentation.SettingsState
 import ru.ptrff.photopano.settings.presentation.SettingsStore
-import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.*
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.DecreasePackCount
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.IncreasePackCount
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.Initialize
+import ru.ptrff.photopano.settings.presentation.SettingsUiEvents.SaveSequence
 import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
@@ -25,9 +28,9 @@ import ru.ptrff.photopano.utils.viewBinding
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
     private val binding by viewBinding(FragmentSettingsBinding::inflate)
-    private val viewModel by viewModels<SettingsStore>()
+    private val store by viewModels<SettingsStore>()
     private val adapter: SettingsAdapter by fastLazy {
-        SettingsAdapter(layoutInflater, viewModel.cameraUtils)
+        SettingsAdapter(layoutInflater, store.cameraUtils)
     }
 
     override fun onCreateView(
@@ -42,12 +45,11 @@ class SettingsFragment : Fragment() {
         initClicks()
 
         initObservers(
-            viewModel,
+            store,
+            initUiEvents = listOf(Initialize(resources.displayMetrics)),
             onStateChanged = ::render,
             onSideEffect = ::handleSideEffects
-        ).also {
-            viewModel.onEvent(Initialize(resources.displayMetrics))
-        }
+        )
     }
 
     private fun render(state: SettingsState) = with(state) {
@@ -76,13 +78,13 @@ class SettingsFragment : Fragment() {
         }
         updatePreviews.setOnClickListener { adapter.reshoot() }
         saveSequence.setOnClickListener {
-            viewModel.onEvent(SaveSequence)
+            store.onEvent(SaveSequence)
         }
         packsLess.setOnClickListener {
-            viewModel.onEvent(DecreasePackCount)
+            store.onEvent(DecreasePackCount)
         }
         packsMore.setOnClickListener {
-            viewModel.onEvent(IncreasePackCount)
+            store.onEvent(IncreasePackCount)
         }
     }
 }

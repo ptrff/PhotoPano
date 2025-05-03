@@ -31,9 +31,6 @@ import androidx.core.graphics.scale
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -49,15 +46,15 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorColors
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogo
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoPadding
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoShape
-import kotlinx.coroutines.launch
+import ru.ptrff.photopano.MainActivity
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentResultBinding
-import ru.ptrff.photopano.MainActivity
 import ru.ptrff.photopano.result.presentation.ResultSideEffects
 import ru.ptrff.photopano.result.presentation.ResultState
-import ru.ptrff.photopano.result.presentation.ResultUiEvents
 import ru.ptrff.photopano.result.presentation.ResultStore
+import ru.ptrff.photopano.result.presentation.ResultUiEvents
 import ru.ptrff.photopano.utils.fastLazy
+import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
 import java.io.File
 import java.io.FileInputStream
@@ -69,7 +66,7 @@ import com.google.android.material.R as MaterialR
 
 class ResultFragment : Fragment() {
     private val binding by viewBinding(FragmentResultBinding::inflate)
-    private val viewModel by viewModels<ResultStore>()
+    private val store by viewModels<ResultStore>()
     private val upload by fastLazy {
         requireArguments().getBoolean("upload", false)
     }
@@ -83,7 +80,12 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initClicks()
         animateCompliments()
-        initObservers()
+
+        initObservers(
+            store,
+            onStateChanged = ::render,
+            onSideEffect = ::handleSideEffect
+        )
 
         File(requireContext().filesDir, "output.gif").takeIf { it.exists() }?.let { file ->
             uploadGif(file)
@@ -93,21 +95,12 @@ class ResultFragment : Fragment() {
 
     private fun uploadGif(file: File) {
         if (upload) {
-            viewModel.onEvent(ResultUiEvents.UploadGif(file))
+            store.onEvent(ResultUiEvents.UploadGif(file))
         } else {
             binding.uploading.setText(R.string.upload_to_cloud)
             binding.uploading.setOnClickListener { v: View? ->
                 binding.uploading.setText(R.string.uploading)
-                viewModel.onEvent(ResultUiEvents.UploadGif(file))
-            }
-        }
-    }
-
-    private fun initObservers() = with(viewModel) {
-        viewModelScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { state.collect { render(it) } }
-                launch { sideEffect.collect { handleSideEffect(it) } }
+                store.onEvent(ResultUiEvents.UploadGif(file))
             }
         }
     }

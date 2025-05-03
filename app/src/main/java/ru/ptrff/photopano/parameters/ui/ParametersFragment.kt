@@ -17,10 +17,20 @@ import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentParametersBinding
 import ru.ptrff.photopano.parameters.presentation.GifType
 import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects
-import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.*
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.NextShootingStep
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShootingComplete
+import ru.ptrff.photopano.parameters.presentation.ParametersSideEffects.ShowCounterDialog
 import ru.ptrff.photopano.parameters.presentation.ParametersState
-import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.*
 import ru.ptrff.photopano.parameters.presentation.ParametersStore
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.Initialize
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogDismiss
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnCounterDialogFinish
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnDoneClicked
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnInterpolateChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnPrepareDurationChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnReverseChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnShootingDurationChange
+import ru.ptrff.photopano.parameters.presentation.ParametersUiEvents.OnUploadChange
 import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
 import java.util.Locale
@@ -30,7 +40,7 @@ class ParametersFragment : Fragment() {
     private val binding by viewBinding(FragmentParametersBinding::inflate)
     private lateinit var counterDialog: CounterDialog
 
-    private val viewModel by viewModels<ParametersStore>()
+    private val store by viewModels<ParametersStore>()
 
     private val minDuration: Float = 0.5f
     private val maxDuration: Float = 5f
@@ -49,12 +59,11 @@ class ParametersFragment : Fragment() {
         initSliders()
 
         initObservers(
-            viewModel,
+            store,
+            initUiEvents = listOf(Initialize),
             onStateChanged = ::render,
             onSideEffect = ::handleSideEffects
-        ).also {
-            viewModel.onEvent(Initialize)
-        }
+        )
     }
 
     private fun initClicks() = with(binding) {
@@ -64,26 +73,30 @@ class ParametersFragment : Fragment() {
 
         durationSlider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
-                viewModel.onEvent(OnShootingDurationChange(value))
+                store.onEvent(OnShootingDurationChange(value))
             }
         }
 
         preparationSlider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
-                viewModel.onEvent(OnPrepareDurationChange(value.toInt()))
+                store.onEvent(OnPrepareDurationChange(value.toInt()))
             }
         }
 
         done.setOnClickListener {
-            viewModel.onEvent(OnDoneClicked)
+            store.onEvent(OnDoneClicked)
         }
 
         reverse.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.onEvent(OnReverseChange(isChecked))
+            store.onEvent(OnReverseChange(isChecked))
         }
 
         interpolate.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.onEvent(OnInterpolateChange(isChecked))
+            store.onEvent(OnInterpolateChange(isChecked))
+        }
+
+        upload.setOnCheckedChangeListener { _, isChecked ->
+            store.onEvent(OnUploadChange(isChecked))
         }
     }
 
@@ -91,7 +104,7 @@ class ParametersFragment : Fragment() {
         counterDialog = CounterDialog(prepareTime, cameraCount, layoutInflater).apply {
             setOnDismissListener {
                 changeDoneButtonState(enabled = true)
-                viewModel.onEvent(OnCounterDialogDismiss)
+                store.onEvent(OnCounterDialogDismiss)
             }
 
             fadeOutParametersCallback = { duration: Int ->
@@ -104,28 +117,27 @@ class ParametersFragment : Fragment() {
 
             startShootingCallback = {
                 binding.flashes.animate()
-                    .alpha(0.4f)
+                    .alpha(0.6f)
                     .setInterpolator(LinearInterpolator())
                     .setDuration(1000)
                     .start()
 
                 startFlashes(cameraCount)
-                viewModel.onEvent(OnCounterDialogFinish)
+                store.onEvent(OnCounterDialogFinish)
             }
 
             show()
         }
     }
 
-    private fun shootingComplete() {
+    private fun shootingComplete(state: ParametersState) {
         counterDialog.counterComplete()
         Bundle().apply {
-            putFloat("duration", binding.durationSlider.value)
-            putBoolean("interpolate", binding.interpolate.isChecked)
-            putBoolean("reverse", binding.reverse.isChecked)
-            putBoolean("upload", binding.upload.isChecked)
-            binding.back.findNavController()
-                .navigate(R.id.action_global_loadingFragment, this)
+            putFloat("duration", state.shootingDuration)
+            putBoolean("interpolate", state.interpolate)
+            putBoolean("reverse", state.reverse)
+            putBoolean("upload", state.upload)
+            binding.back.findNavController().navigate(R.id.action_global_loadingFragment, this)
         }
     }
 
@@ -156,7 +168,7 @@ class ParametersFragment : Fragment() {
             showDialog(sideEffect.prepareTime, sideEffect.cameraCount)
         }
 
-        is ShootingComplete -> shootingComplete()
+        is ShootingComplete -> shootingComplete(sideEffect.state)
         is NextShootingStep -> counterDialog.nextStep()
     }
 
@@ -186,7 +198,7 @@ class ParametersFragment : Fragment() {
             RotatedGradientDrawable(
                 context = this,
                 colors = intArrayOf(
-                    getColor(android.R.color.white),
+                    getColor(R.color.md_theme_primaryContainer_highContrast),
                     getColor(R.color.white_alpha_02),
                     getColor(R.color.md_theme_background_transparent)
                 ),

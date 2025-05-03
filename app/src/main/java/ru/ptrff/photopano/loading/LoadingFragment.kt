@@ -1,106 +1,72 @@
 package ru.ptrff.photopano.loading
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentLoadingBinding
-import ru.ptrff.photopano.MainActivity.Companion.TAG
-import ru.ptrff.photopano.utils.AnimationUtils
-import ru.ptrff.photopano.utils.CameraUtils
+import ru.ptrff.photopano.loading.presentation.LoadingSideEffects
+import ru.ptrff.photopano.loading.presentation.LoadingSideEffects.ChangeAnimationDescription
+import ru.ptrff.photopano.loading.presentation.LoadingSideEffects.ProcessingDone
+import ru.ptrff.photopano.loading.presentation.LoadingStore
+import ru.ptrff.photopano.loading.presentation.LoadingUiEvents.ProcessArguments
+import ru.ptrff.photopano.loading.presentation.LoadingUiEvents.StartProcessing
+import ru.ptrff.photopano.utils.initObservers
 import ru.ptrff.photopano.utils.viewBinding
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoadingFragment : Fragment() {
 
     private val binding by viewBinding(FragmentLoadingBinding::inflate)
+    private val store by viewModels<LoadingStore>()
 
     private var animationRunning = false
-    private var duration = 0f
-    private var interpolate = false
-    private var reverse = false
-    private var upload = false
-
-    @Inject
-    lateinit var cameraUtils: CameraUtils
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = binding.root.also {
-        arguments?.let {
-            duration = it.getFloat("duration", 1f)
-            interpolate = it.getBoolean("interpolate", false)
-            reverse = it.getBoolean("reverse", false)
-            upload = it.getBoolean("upload", false)
-        }
-    }
+    ): View = binding.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startProcessing()
+
+        initObservers(
+            store,
+            initUiEvents = listOf(
+                ProcessArguments(arguments),
+                StartProcessing(requireContext().filesDir)
+            ),
+            onStateChanged = { },
+            onSideEffect = ::handleSideEffect
+        )
     }
 
-    @SuppressLint("CheckResult")
-    private fun startProcessing() = AnimationUtils(requireContext(), duration).apply {
-        setCameras(cameraUtils.supportedCameras)
-        changeAnimationDescription =
-            { binding.root.post { binding.loadingDescription.setText(it) } }
+    private fun handleSideEffect(sideEffect: LoadingSideEffects) = when (sideEffect) {
+        is ChangeAnimationDescription -> with(binding.loadingDescription) {
+            post { setText(sideEffect.stringRes) }
+        }
 
-        prepareEnvironment()
-            .andThen(Completable.defer(::combineImages))
-            .andThen(Completable.defer(::createPalette))
-            .andThen(
-                Completable.defer {
-                    if (interpolate) {
-                        interpolation()
-                    } else {
-                        Completable.complete()
-                    }
-                }
-            )
-            .andThen(
-                Completable.defer {
-                    if (reverse) {
-                        reverseAnimation()
-                    } else {
-                        convertToGif()
-                    }
-                }
-            )
-            .andThen(Completable.defer(::emptyTemp))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onComplete = ::processingDone,
-                onError = { Log.e(TAG, "error creating animation: " + it.message) }
-            )
+        is ProcessingDone -> processingDone(sideEffect.upload)
     }
 
-    private fun processingDone() {
+    private fun processingDone(upload: Boolean) {
         val args = Bundle()
         args.putBoolean("upload", upload)
         binding.root.findNavController()
             .navigate(R.id.action_loadingFragment_to_resultFragment, args)
     }
 
-    private fun startAnimation() {
+    private fun startAnimation() = with(binding) {
         animationRunning = true
 
-        binding.loadingLabel.post {
-            binding.loadingLabel.layoutParams.width = binding.loadingLabel.measuredWidth
+        loadingLabel.post {
+            loadingLabel.layoutParams.width = loadingLabel.measuredWidth
             dotAnimation()
         }
     }
