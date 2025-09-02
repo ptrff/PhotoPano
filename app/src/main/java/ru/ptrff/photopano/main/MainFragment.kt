@@ -1,5 +1,7 @@
 package ru.ptrff.photopano.main
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +11,24 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import ru.ptrff.photopano.R
 import ru.ptrff.photopano.databinding.FragmentMainBinding
+import ru.ptrff.photopano.utils.fastLazy
 import ru.ptrff.photopano.utils.viewBinding
 
 class MainFragment : Fragment() {
 
+    companion object {
+
+        private const val ONBOARDING_DIALOG_KEY = "OnboardingShowed"
+        private const val ONBOARDING_DIALOG_TAG = "OnboardingDialog"
+    }
+
     private val binding by viewBinding(FragmentMainBinding::inflate)
     private var backgroundAnimationRunning = false
+    private val sharedPreferences: SharedPreferences by fastLazy {
+        requireActivity().getSharedPreferences(javaClass.simpleName, Context.MODE_PRIVATE)
+    }
+    private val editor: SharedPreferences.Editor
+        get() = sharedPreferences.edit()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,6 +39,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initClicks()
+        showOnboardingIfNeed()
     }
 
     private fun initClicks() {
@@ -33,6 +48,15 @@ class MainFragment : Fragment() {
         }
         binding.settings.setOnClickListener {
             it.findNavController().navigate(R.id.action_mainFragment_to_settingsFragment)
+        }
+    }
+
+    private fun showOnboardingIfNeed() {
+        if (!sharedPreferences.getBoolean(ONBOARDING_DIALOG_KEY, false)) {
+            OnboardingDialog().apply {
+                isCancelable = false
+            }.show(parentFragmentManager, ONBOARDING_DIALOG_TAG)
+            editor.putBoolean(ONBOARDING_DIALOG_KEY, true).apply()
         }
     }
 
