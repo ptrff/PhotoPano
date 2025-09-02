@@ -59,4 +59,18 @@
     <string name="well_errors">Чтож, будут ошибки..</string>
     <string name="download">Загрузить</string>
     <string name="your_gif">Ваша гифка</string>
+    <string name="onboarding_next">Далее</string>
+    <string name="onboarding_back">Назад</string>
+    <string name="onboarding_done">Готово</string>
+    <string name="onboarding_skip">Пропустить</string>
+    <string name="onboarding_title_1">Обучение PhotoPano!</string>
+    <string name="onboarding_message_1">Мы поможем вам сделать памятную гифку Вашего мероприятия</string>
+    <string name="onboarding_title_2">Подготовка</string>
+    <string name="onboarding_message_2">Для лучшего результата вам необходимо подключить побольше камер к устройству и расположить их в форме полукруга смотрящими на одну точку</string>
+    <string name="onboarding_title_3">Страница настроек</string>
+    <string name="onboarding_message_3">В настройках можно изменить порядок камер, сохранить его, а также настроить параллельную подготовку камер (пачки)</string>
+    <string name="onboarding_title_4">Страница параметров съемки</string>
+    <string name="onboarding_message_4">Настройте параметры как вам нравится и начните съемку!</string>
+    <string name="onboarding_title_5">Страница результата</string>
+    <string name="onboarding_message_5">Вы можете сохранить получившуюся гифку или попробовать снова</string>
 </resources>
